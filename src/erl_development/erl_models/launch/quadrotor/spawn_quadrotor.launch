@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
+<launch>
+
+  <arg name="ns" default="quad0"/>
+  <arg name="raw_odom" default="ground_truth/global_odom"/>
+  <arg name="odom" default="odom"/>
+  <arg name="range" default="2"/>
+  <arg name="alpha" default="0.6"/>
+  <arg name="red" default="0.1"/>
+  <arg name="green" default="0"/>
+  <arg name="blue" default="1"/>
+  <arg name="mass" default="0.5"/>
+  <arg name="odom_frame" default="map"/>
+  <arg name="robot_frame" default="$(arg ns)/base_link"/>
+  <arg name="nodelet_manager_name" default="nodelet_manager_control"/>
+  <arg name="start_nodelet_manager" default="true"/>
+
+  <arg name="x" default="0.0"/>
+  <arg name="y" default="0.0"/>
+  <arg name="z" default="0.1"/>
+  <arg name="Y" default="0.0"/>
+
+
+  <!-- Spawn the Quadrotor -->
+  <include file="$(find erl_models)/launch/spawn_robot.launch">
+    <arg name="ns" value="$(arg ns)"/>
+    <arg name="tf_prefix" value="$(arg ns)" />
+    <arg name="model" value="$(find erl_models)/urdf/pelican_laser/pelican_laser.gazebo.xacro"/>
+    <arg name="px" value="$(arg x)" />
+    <arg name="py" value="$(arg y)" />
+    <arg name="pz" value="$(arg z)" />
+    <arg name="use_groundtruth_odom" value="true" />
+  </include>
+
+<!-- Control stuff -->
+  <group ns="$(arg ns)">
+    <node pkg="nodelet"
+      type="nodelet"
+      name="$(arg nodelet_manager_name)"
+      args="manager"
+      output="screen"
+      if="$(arg start_nodelet_manager)"/>
+
+   #### Trajectory Tracker (State Machine) ####
+    <node pkg="erl_trackers"
+      type="quad_tracker_simple"
+      name="quad_tracker"
+      output="screen">
+      <rosparam file="$(find kr_mav_launch)/config/gains.yaml"/>
+      <remap from="~mode" to="mode"/>
+      <remap from="~motors" to="motors"/>
+      <remap from="~position_cmd" to="position_cmd"/>
+      <remap from="~traj" to="traj"/>
+      <param name="taking_off_height" value="0.5"/>
+      <param name="max_v_xy" value="2"/>
+      <param name="x" value="$(arg x)"/>
+      <param name="y" value="$(arg y)"/>
+      <param name="z" value="$(arg z)"/>
+    </node>
+
+    #### Controller #####
+    <node pkg="nodelet"
+      type="nodelet"
+      args="load kr_mav_controllers/SO3ControlNodelet $(arg nodelet_manager_name)"
+      name="so3_control"
+      required="true"
+      output="screen">
+      <rosparam file="$(find kr_mav_launch)/config/gains.yaml"/>
+      <param name="mass" value="$(arg mass)"/>
+      <remap from="~odom" to="$(arg raw_odom)"/>
+      <remap from="~position_cmd" to="position_cmd"/>
+      <remap from="~so3_cmd" to="so3_cmd"/>
+      <remap from="~motors" to="motors"/>
+    </node>
+
+    <!--#### Visualization #####-->
+    <!--<node pkg="nodelet"-->
+      <!--type="nodelet"-->
+      <!--name="cmd_vis"-->
+      <!--args="standalone using_markers/CmdVisualization"-->
+      <!--output="screen">-->
+      <!--<remap from="~position_cmd" to="position_cmd"/>-->
+    <!--</node>-->
+
+
+    <!--<node pkg="using_markers"-->
+      <!--name="odom_vis"-->
+      <!--type="quad_visualization"-->
+      <!--output="screen">-->
+      <!--<remap from="~quad" to="$(arg odom)"/>-->
+      <!--<param name="scale" value="1.4"/>-->
+      <!--<param name="color/r" value="0.0"/>-->
+      <!--<param name="color/b" value="1.0"/>-->
+    <!--</node>-->
+
+
+    <!--<include file="$(find mrsl_quadrotor_utils)/launch/teleop_logitech.launch"/>-->
+    <!--<include file="$(find mrsl_quadrotor_utils)/launch/teleop.launch"/>-->
+
+  </group>
+
+</launch>

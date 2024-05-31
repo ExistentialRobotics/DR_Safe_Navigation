@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<!--
+    - Base      : create
+    - Stacks    : circles
+    - 3d Sensor : kinect
+-->
+<robot name="scarab" xmlns:xacro="http://ros.org/wiki/xacro">
+  <!-- Properties -->
+  <!-- <xacro:property name="ns" value="$(arg robot_name)" /> -->
+  
+  <xacro:include filename="$(find erl_models)/urdf/scarab/common_properties.urdf.xacro"/>
+  <xacro:include filename="$(find erl_models)/urdf/scarab/scarab_properties.urdf.xacro"/>
+  <xacro:include filename="$(find erl_models)/urdf/scarab/stacks/kobuki_red.urdf.xacro" />
+  <xacro:include filename="$(find erl_models)/urdf/scarab/stacks/hexagons_red.urdf.xacro"/>
+
+  <!-- 3D Sensors -->
+<!--   <xacro:include filename="$(find erl_models)/urdf/scarab/sensors/kinect.urdf.xacro"/>
+  <xacro:include filename="$(find erl_models)/urdf/scarab/sensors/asus_xtion_pro.urdf.xacro"/>
+  <xacro:include filename="$(find erl_models)/urdf/scarab/sensors/vi_sensor.xacro" />
+  <xacro:include filename="$(find erl_models)/urdf/sensors/VLP-16.urdf.xacro" />
+ -->
+  <kobuki/>
+  
+  <stack_hexagons parent="base_link"/>
+  <!-- Mount a Kinect Sensor -->
+  <sensor_kinect parent="base_link"/>
+  
+  <!-- Mount an Asus Sensor -->
+  <!--<sensor_asus_xtion_pro parent="base_link"/>  -->
+  
+  <!-- Mount a Velodyne Sensor -->
+  <!-- <xacro:VLP-16 name="velodyne" parent="base_link" topic="point_cloud" robot="scarab40">
+    <origin xyz="0.0 0.0 0.1" rpy="0 0 0"/>
+  </xacro:VLP-16>
+   -->
+  <!-- <xacro:include filename="$(find erl_models)/urdf/scarab/sensors/hokuyo.gazebo" /> -->
+
+  <!-- Mount a VI-sensor on the scarab. -->
+<!--   <xacro:vi_sensor_macro
+    namespace="vi_sensor"
+    parent_link="base_link"
+    enable_cameras="true"
+    enable_depth="true"
+    enable_ground_truth="false"
+  >
+    <origin xyz="0.0 0.0 0.5" rpy="0.0 0.0 0.0" />
+  </xacro:vi_sensor_macro>
+ -->
+  <!-- Plugins -->
+  <gazebo>
+    <!-- Ground Truth Odom Plugin -->
+    <plugin name="scarab_groundtruth_sim" filename="libgazebo_ros_p3d.so">
+      <robotNamespace>$(arg robot_name)</robotNamespace>
+      <updateRate>100.0</updateRate>
+      <bodyName>base_footprint</bodyName>
+      <topicName>ground_truth/global_odom</topicName>
+      <gaussianNoise>0.0</gaussianNoise>
+      <frameName>map</frameName>
+    </plugin>
+   </gazebo>
+
+</robot>
+

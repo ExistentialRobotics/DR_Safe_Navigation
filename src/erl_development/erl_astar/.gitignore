@@ -1,0 +1,15 @@
+#Build
+build
+lib
+bin
+cmake-build-debug
+debug
+release
+docs
+# Program specific
+test_path.yaml
+#IDE
+.idea
+# Python Cache
+script/__pycache__
+*.pyc

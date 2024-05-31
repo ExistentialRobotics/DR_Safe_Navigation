@@ -1,0 +1,49 @@
+<launch>
+  <arg name="init" default="true" />
+  <node pkg="kinematic_sim" type="kinematic_sim" name="KinematicSim"
+        respawn="false">
+    <param name="publish_freq" value="20"/>
+    <param name="num_agents" value="1"/>
+
+    <param name="agent_prefix" value="scarab"/>
+    <param name="gt_pose_topic" value="pose_stamped" />
+
+    <param name="pub_global_frame" value="true" />
+
+    <param name="initial0" value=" 0.0 0.0 0.0"/>
+  </node>
+
+  <node name="map_server" pkg="map_server" type="map_server"
+        args="$(find scarab)/maps/levine-4.yaml" output="screen">
+  </node>
+
+  <group ns="scarab0">
+    <node name="laser_simulator" pkg="laser_simulator" type="laser_simulator"
+          output="screen">
+      <remap from="~map" to="/map"/>
+      <remap from="~odom" to="/scarab0/odom_motor"/>
+      <remap from="~scan" to="/scarab0/scan" />
+      <rosparam file="$(find laser_simulator)/config/models.yaml"/>
+      <rosparam file="$(find laser_simulator)/models/UTM_30.yaml"/>
+      <param name="offset/x" value="0"/>
+      <param name="offset/y" value="0"/>
+      <param name="offset/z" value="0.2"/>
+      <param name="frame_id" value="scarab0/laser"/>
+      <param name="rate" value="10" />
+    </node>
+
+    <node name="transformer" pkg="tf" type="static_transform_publisher"
+        args="0 0 0.2 0 0 0 scarab0/base_link scarab0/laser 500" />
+
+    <node name="pose_stamped" pkg="scarab" type="posestamped_node.py" />
+
+    <node name="laser_odom" pkg="laser_odom" type="laser_odom"
+          output="screen" >
+      <param name="debug" value="true" />
+      <param name="base_frame" value="scarab0/odom_laser" />
+      <param name="odom_frame" value="map" />
+      <param name="min_update_dist" value="0.05" />
+      <param name="min_update_angle" value="1.0 * PI / 180" />
+    </node>
+  </group>
+</launch>

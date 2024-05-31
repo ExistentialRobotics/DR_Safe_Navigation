@@ -1,0 +1,8 @@
+# Empty Map
+mapmin: [0, 0]
+mapmax: [26, 26]
+mapres: [.01, .01]
+origin: [0, 0]
+datatype: c
+storage: colmajor
+mappath: emptyMap.cfg

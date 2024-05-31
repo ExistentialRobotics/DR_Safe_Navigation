@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+ 
+<robot name="mobile_velodyne" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:include filename="$(find erl_models)/urdf/mobile_velodyne/mobile_velodyne.urdf.xacro" />
+</robot>
+

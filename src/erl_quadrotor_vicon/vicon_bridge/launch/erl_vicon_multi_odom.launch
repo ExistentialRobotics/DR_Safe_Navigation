@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+
+<launch>
+
+  <!--############### Parameters ###################-->
+    <arg name="datastream_hostport" default="192.168.30.153:801"/>
+    <arg name="vicon_world_frame" default="odom"/>
+    <arg name="publish_tf" default="true"/>
+    <arg name="vicon_fps" default="100"/>
+    <arg name="output" default="screen"/>
+    <arg name="subject1_name" default="movobs_1"/>
+    <arg name="subject2_name" default="movobs_2"/>
+
+    <!--############### VICON  ###################-->
+    <!-- IP and port on Vicon Windows PC -->
+    <node pkg="vicon_bridge" type="vicon_bridge" name="vicon" output="screen" >
+        <param name="stream_mode" value="ServerPush"/>
+        <param name="datastream_hostport" value="$(arg datastream_hostport)"/>
+        <param name="tf_ref_frame_id" value="$(arg vicon_world_frame)"/>
+    </node>
+
+    <!-- VICON Odometry from KumarRobotics -->
+    <node pkg="vicon_odom" type="vicon_odom" name="$(arg subject1_name)"
+        output="$(arg output)" ns="vicon">
+        <param name="child_frame_id" type="string" value="$(arg subject1_name)"/>
+        <param name="publish_tf" type="bool" value="$(arg publish_tf)"/>
+        <param name="max_accel" value="10.0"/>
+        <param name="vicon_fps" type="int" value="$(arg vicon_fps)"/>
+        <remap from="~vicon_subject" to="$(arg subject1_name)"/>
+        <remap from="/vicon/robot_1/robot_1" to="/vicon/$(arg subject1_name)/$(arg subject1_name)"/>
+        <remap from="~odom" to="/vicon/$(arg subject1_name)/odom"/>
+    </node>
+
+    <node pkg="vicon_odom" type="vicon_odom" name="$(arg subject2_name)"
+        output="$(arg output)" ns="vicon">
+        <param name="child_frame_id" type="string" value="$(arg subject2_name)"/>
+        <param name="publish_tf" type="bool" value="$(arg publish_tf)"/>
+        <param name="max_accel" value="10.0"/>
+        <param name="vicon_fps" type="int" value="$(arg vicon_fps)"/>
+        <remap from="~vicon_subject" to="$(arg subject2_name)"/>
+        <remap from="/vicon/robot_1/robot_1" to="/vicon/$(arg subject2_name)/$(arg subject2_name)"/>
+        <remap from="~odom" to="/vicon/$(arg subject2_name)/odom"/>
+    </node>
+
+</launch>

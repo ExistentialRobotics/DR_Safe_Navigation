@@ -1,0 +1,9 @@
+
+<launch>
+
+    <!-- Motors ON -->
+    
+    <node name="auto_mode" type="start_auto_mode.sh" pkg="erl_models"/>
+
+
+</launch>

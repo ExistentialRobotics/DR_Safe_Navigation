@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+
+<robot name="mobile_object" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:property name="pi" value="3.1415926535897931" />
+  <xacro:property name="h" value="2" />
+  <xacro:property name="object" value="barrel" />
+  <xacro:property name="mass" value="0.0001" />
+  <xacro:property name="ixx" value="0.0001" />
+  <xacro:property name="iyy" value="0.0001" />
+  <xacro:property name="izz" value="0.0001" />
+  <xacro:macro name="object_base_macro" params="name">
+    <link name="${name}/base_link">
+      <inertial>
+        <!--mass value="1.477" /-->
+        <mass value="${mass}"/>
+        <origin xyz="0 0 0" />
+        <inertia ixx="${ixx}" ixy="0.0" ixz="0.0" iyy="${iyy}" iyz="0.0" izz="${izz}" />
+      </inertial>
+
+      <visual>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <geometry>
+          <mesh filename="package://erl_models/models/${object}/${object}.dae"/>
+        </geometry>
+      </visual>
+
+      <collision>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <geometry>
+          <mesh filename="package://erl_models/models/${object}/${object}.dae"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <!-- Plugins -->
+    <gazebo>
+      <plugin name="mobile_${object}" filename="libmrsl_mobile_object.so">
+        <vx>0.0</vx>
+        <vy>1.0</vy>
+        <w>0.0</w>
+        <objectName>${name}</objectName>
+        <topicName>pose</topicName>
+        <updateRate>20.0</updateRate>
+    </plugin>
+   </gazebo>
+
+  </xacro:macro>
+
+  <xacro:object_base_macro name="mobile_${object}"/>
+</robot>
+

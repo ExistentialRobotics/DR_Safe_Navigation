@@ -1,0 +1,11 @@
+mapmin: [-26.1, -24.675]
+mapmax: [26.15, 24.675]
+mapres: [0.05, 0.05]
+mapdim: [1045, 987]
+origin: [0.02499999999999858, 0]
+origincells: [522, 493]
+datatype: a  # int8_t
+storage: colmajor
+mappath: large_map_2d.cfg
+
+

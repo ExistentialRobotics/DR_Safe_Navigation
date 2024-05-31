@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+
+<robot name="mobile_rgbd" xmlns:xacro="http://ros.org/wiki/xacro">
+  <!-- Main link -->
+  <xacro:macro name="mobile_rgbd_base_macro">
+    <!--<xacro:property name="ns" value="$(arg robot_name)" />-->
+    <xacro:property name="mass" value="0.2" />
+    <link name="$(arg robot_name)/base_link">
+      <inertial>
+        <mass value="${mass}"/>
+        <origin xyz="0 0 0" />
+        <inertia ixx="0.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="0.0" />
+      </inertial>
+    </link>
+  </xacro:macro>
+  <xacro:mobile_rgbd_base_macro/>
+
+  <!-- Include Asus RGBD Camera -->
+  <xacro:include filename="$(find erl_models)/urdf/sensors/asus_camera.urdf.xacro" />
+  <xacro:asus_camera name="$(arg robot_name)/camera" parent="$(arg robot_name)/base_link">
+    <origin xyz="0.2 0.0 0.2" rpy="${M_PI} 0 0"/>
+  </xacro:asus_camera>
+
+  <!-- Plugins -->
+  <gazebo>
+    <!-- Ground Truth Odom Plugin -->
+    <plugin name="rgbd_groundtruth_sim" filename="libgazebo_ros_p3d.so">
+      <robotNamespace>$(arg robot_name)</robotNamespace>
+      <updateRate>100.0</updateRate>
+      <bodyName>$(arg robot_name)/base_link</bodyName>
+      <topicName>ground_truth/odom</topicName>
+      <gaussianNoise>0.0</gaussianNoise>
+      <frameName>map</frameName>
+    </plugin>
+   </gazebo>  
+</robot>
+

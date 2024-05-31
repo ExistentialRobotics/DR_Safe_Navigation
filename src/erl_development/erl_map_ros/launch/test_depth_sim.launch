@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<launch>
+  
+  <!--<arg name="model_name" default="fla_warehouse1" />-->
+  <!--<arg name="model_name" default="circles_2d" />-->
+  <!--<arg name="model_name" default="large_map_2d" />-->
+  <!--<arg name="model_name" default="pretzel" />  -->
+  <!--<arg name="model_name" default="sikang_map_2d" />-->
+  <!--<arg name="model_name" default="sikang_map_3d" />-->
+  <!--<arg name="model_name" default="small_map_2d" />-->
+  
+  <arg name="world" default="fla_warehouse1" />
+  <arg name="gridmap_file" default="$(find erl_models)/models/$(arg world)/$(arg world).yaml"/>
+  <arg name="meshmap_file" default="$(find erl_models)/models/$(arg world)/$(arg world).off"/>
+  <arg name="world_frame" default="map"/>
+
+  
+  <!-- Run the map server -->
+  <node name="depth_sim" pkg="erl_map_ros" type="test_depth_sim" output="screen" args="$(arg gridmap_file) $(arg meshmap_file)" />
+
+  <node pkg="rviz" type="rviz" name="rviz" output="screen"
+    args="-d $(find erl_map_ros)/rviz/test_depth_sim.rviz"/>
+
+  <!-- Visualize the Mesh -->
+  <node pkg="erl_models"
+    type="mesh_visualization"
+    name="env_vis">
+    <param name="mesh_resource" value="package://erl_models/models/$(arg world)/$(arg world).dae"/>
+    <param name="world_frame" value="/$(arg world_frame)"/>
+    <param name="scale" value="1"/>
+    <param name="is_static" type="bool" value="true"/>
+  </node>
+
+</launch>

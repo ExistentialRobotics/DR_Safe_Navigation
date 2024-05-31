@@ -1,0 +1,9 @@
+mapmin: [-2, -2]
+mapmax: [1, 1]
+mapres: [1, 1]
+mapdim: [3, 3]
+origin: [-0.5, -0.5]
+origincells: [1, 1]
+datatype: a
+storage: rowmajor
+mappath: map_2d.cfg

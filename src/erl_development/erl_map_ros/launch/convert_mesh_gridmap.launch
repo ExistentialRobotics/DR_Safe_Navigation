@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<launch>
+  <!--<arg name="map_file" default="$(find erl_astar)/data/maps/sikang_map_3d_cell.yaml"/>-->
+  <!--<arg name="map_file" default="$(find erl_astar)/data/maps/fla_warehouse1.yaml"/>-->
+  <!--<arg name="map_file" default="$(find erl_astar)/data/maps/small_map_2d.yaml"/>-->
+  <arg name="world" default="skir"/>
+  <arg name="world_frame" default="map"/>
+  <arg name="res_xy" default="0.1"/>
+  <arg name="res_z" default="0.5"/>
+  <arg name="make_2d" default="false"/>
+
+  <!-- Run the map server -->
+  <node name="convert_mesh_gridmap" pkg="erl_map_ros" type="convert_mesh_gridmap" output="screen" args="$(find erl_models)/models/$(arg world)/$(arg world).stl">
+    <param name="frame_id" value="map"/>
+    <param name="data_type" value="char"/>
+    <param name="res_xy" value="$(arg res_xy)"/>
+    <param name="res_z" value="$(arg res_z)"/>
+    <param name="make_2d" value="$(arg make_2d)"/>
+  </node>
+  
+  <!-- Visualize newly created GridMap in rviz -->
+  <node pkg="erl_visualization" type="grid_msg_visualization" name="grid_visualization" output="screen">
+    <param name="world_frame" value="map"/>
+    <remap from="~grid_msg" to="map" />
+  </node>
+
+
+  <!-- Visualize existing MeshMap in rviz -->
+  <!-- Visualize a dae file in rviz -->
+  <node pkg="erl_models"
+    type="mesh_visualization"
+    name="env_vis">
+    <param name="mesh_resource" value="package://erl_models/models/$(arg world)/$(arg world).dae"/>
+    <param name="world_frame" value="/$(arg world_frame)"/>
+    <param name="scale" value="1"/>
+    <param name="is_static" type="bool" value="true"/>
+  </node>
+
+
+  <node pkg="rviz" type="rviz" name="rviz" output="screen"
+    args="-d $(find erl_map_ros)/rviz/test_gridmap_server.rviz"/>  
+</launch>
+

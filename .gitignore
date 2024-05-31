@@ -1,0 +1,21 @@
+# Add any directories, files, or patterns you don't want to be tracked by version control
+*.aux
+*.log
+*.synctex.gz
+/__pycache__/
+*.pyc
+sim_figs/**/*.png
+sim_figs/**/*.pdf
+sim_figs/
+sim_figs/*.png
+notes/*frame*.*
+src/.idea/
+**/.idea
+install
+devel
+logs
+build
+.catkin_tools
+.vscode
+cmake-build-*
+

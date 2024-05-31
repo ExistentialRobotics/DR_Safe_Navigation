@@ -1,0 +1,43 @@
+
+{
+  "drccp": {
+    "parameters": {
+      "wheel_offset": 0.08,
+      "cbf_rate": 0.4,
+      "clf_rate": 1.0,
+      "wasserstein_r": 0.004,
+      "epsilon": 0.1,
+      "noise_level": 0.01
+    }
+  },
+  "baseline_clf_cbf_qp": {
+    "parameters": {
+      "wheel_offset": 0.08,
+      "clf_rate": 1.0,
+      "cbf_rate": 0.4,
+      "noise_level": 0.05
+    }
+  },
+  "gp_cbf_socp": {
+    "parameters": {
+      "wheel_offset": 0.08,
+      "cbf_rate": 0.6,
+      "epsilon": 0.4
+    }
+  },
+  "clf_qp_only": {
+    "parameters": {
+      "wheel_offset": 0.08,
+      "cbf_rate": 0.4
+    }
+  },
+  "robust_cbf_socp": {
+    "parameters": {
+      "wheel_offset": 0.08,
+      "cbf_rate": 0.4
+    }
+  }
+
+}
+
+

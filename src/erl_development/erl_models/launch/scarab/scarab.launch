@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
+<launch>
+  <arg name="ns" default="scarab40" />
+  
+	<!-- Spawn the World -->
+  <include file="$(find erl_models)/launch/spawn_world.launch">
+    <arg name="world" value="levine"/>
+    <arg name="scale" value="1"/>
+    <arg name="gui" value="true"/>
+  </include>
+  
+  <!-- Spawn the Scarab -->
+  <include file="$(find erl_models)/launch/spawn_robot.launch">
+    <arg name="ns" value="$(arg ns)"/>
+    <arg name="tf_prefix" value="$(arg ns)" />
+    <arg name="model" value="$(find erl_models)/urdf/scarab/scarab.xacro"/>
+    <arg name="px" value="0.0" />
+    <arg name="py" value="1.0" />
+    <arg name="use_groundtruth_odom" value="true" />
+  </include>
+
+  <!-- Run Scarab Localization -->
+  <include file="$(find erl_models)/launch/scarab/scarab_localization.launch">
+    <arg name="ns" value="$(arg ns)"/>
+    <arg name="tf_prefix" value="$(arg ns)" />
+    <arg name="base_frame" value="base_footprint"/>
+    <arg name="laser_frame" value="laser"/>
+    <arg name="odom_laser_frame" value="odom"/>
+    <arg name="scan_topic" value="scan" />
+    <arg name="odom_motor_topic" value="odom" />
+    <arg name="odom_laser_topic" value="odom_laser" />
+  </include>
+    
+    
+  <!-- Run Scarab Mapping -->
+  <include file="$(find erl_models)/launch/scarab/scarab_mapping.launch">
+    <arg name="ns" value="$(arg ns)"/>
+    <arg name="tf_prefix" value="$(arg ns)" />
+    <arg name="scan_topic" value="scan" />
+    <arg name="base_frame" value="base_footprint"/>
+    <arg name="odom_frame" value="odom"/>
+    <arg name="map_frame"  value="map"/>        
+  </include>
+  
+  <!-- Run Scarab Navigation-->
+  <include file="$(find erl_models)/launch/scarab/scarab_navigation.launch">
+    <arg name="ns" value="$(arg ns)"/>
+    <arg name="tf_prefix" value="$(arg ns)" />
+    
+    <arg name="map_frame"  value="map"/>
+    <arg name="odom_frame" value="odom"/>
+    <arg name="base_frame" value="base_footprint"/>
+    
+    <arg name="map_topic"  value="map"/>
+    <arg name="odom_topic" value="odom"/>
+    <arg name="scan_topic" value="scan" />
+    <arg name="pose_topic" value="pose" />
+    <arg name="goal_topic" value="move_base_simple/goal"/>
+    
+    <arg name="use_hfn" value="true"/>   
+  </include>  
+ 
+
+    
+  <!-- Launch rviz -->
+  <node pkg="rviz" type="rviz" name="rviz"
+        args="-d $(find erl_models)/rviz/scarab40.cfg.rviz"/>
+  
+
+</launch>
+

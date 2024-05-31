@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<robot name="pelican" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:include filename="$(find erl_models)/urdf/pelican/pelican_so3.urdf.xacro" />
+</robot>

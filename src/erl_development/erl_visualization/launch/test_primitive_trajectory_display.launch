@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<launch>
+
+  <node pkg="erl_visualization"
+    type="test_primitive_trajectory_display"
+    name="test_primitive_trajectory_display"
+    output="screen"/>
+
+  <node pkg="rviz"
+    type="rviz"
+    name="rviz"
+    output="screen"
+
+    args="-d $(find erl_visualization)/rviz/test_primitive_trajectory_display.rviz"/>
+
+</launch>

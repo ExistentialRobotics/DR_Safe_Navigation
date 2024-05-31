@@ -1,0 +1,57 @@
+<launch>
+
+  <!-- using virtual moving obstacle --> 
+  <arg name="virtual" default="false" />
+  <arg name="simulation" default="true" />
+
+  <!-- define moving obstacle set radius --> 
+  <arg name="mo1_radius" default="1.0" />
+  <arg name="mo2_radius" default="1.0" />
+
+  <!-- define virtual moving obstacle start & goal position --> 
+  <arg name="mo1_pstart_x" default="-6.0" />
+  <arg name="mo1_pstart_y" default="2.0" />
+  <arg name="mo2_pstart_x" default="0.0" />
+  <arg name="mo2_pstart_y" default="-4.0" />
+  <arg name="mo1_pgoal_x" default="0.0" />
+  <arg name="mo1_pgoal_y" default="7.0" />
+  <arg name="mo2_pgoal_x" default="8.0" />
+  <arg name="mo2_pgoal_y" default="0.0" />
+
+  <!-- define virtual moving obstacle velocity --> 
+  <arg name="mo1_v" default="0.5" />
+  <arg name="mo2_v" default="0.5" />
+
+  <!-- using captured moving obstacle odom --> 
+  <arg name="mo1_subject_name" default="movobs_1"/>
+  <arg name="mo2_subject_name" default="movobs_2"/>
+
+  <!--- start Vicon when not simulating with virtual moving obstacles-->
+  <group unless="$(arg virtual)" >
+    <include file="$(find vicon_bridge)/launch/erl_vicon_multi_odom.launch">
+      <arg name="subject1_name" value="$(arg mo1_subject_name)"/>
+      <arg name="subject2_name" value="$(arg mo2_subject_name)"/>
+    </include>
+  </group >
+
+  <!--- moving obstacle info node -->
+  <node pkg="erl_moving_obstacle" type="mov_obs_info_node.py" name="mov_obs_info" output="screen">
+    <param name="virtual" value="$(arg virtual)"/>
+    <param name="simulation" value="$(arg simulation)"/>
+    <param name="mo1_radius" value="$(arg mo1_radius)"/>
+    <param name="mo2_radius" value="$(arg mo2_radius)"/>
+    <param name="mo1_subject_name" value="$(arg mo1_subject_name)"/>
+    <param name="mo2_subject_name" value="$(arg mo2_subject_name)"/>
+    <param name="mo1_pstart_x" value="$(arg mo1_pstart_x)"/>
+    <param name="mo1_pstart_y" value="$(arg mo1_pstart_y)"/>
+    <param name="mo2_pstart_x" value="$(arg mo2_pstart_x)"/>
+    <param name="mo2_pstart_y" value="$(arg mo2_pstart_y)"/>
+    <param name="mo1_pgoal_x" value="$(arg mo1_pgoal_x)"/>
+    <param name="mo1_pgoal_y" value="$(arg mo1_pgoal_y)"/>
+    <param name="mo2_pgoal_x" value="$(arg mo2_pgoal_x)"/>
+    <param name="mo2_pgoal_y" value="$(arg mo2_pgoal_y)"/>
+    <param name="mo1_v" value="$(arg mo1_v)"/>
+    <param name="mo2_v" value="$(arg mo2_v)"/>
+  </node>
+
+</launch>

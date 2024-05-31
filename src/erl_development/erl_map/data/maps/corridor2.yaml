@@ -1,0 +1,9 @@
+mapmin: [-0.05000000000000071, -0.05000000000000071]
+mapmax: [10.05, 10.05]
+mapres: [0.1, 0.1]
+mapdim: [101, 101]
+origin: [5, 5]
+origincells: [50, 50]
+datatype: a
+storage: colmajor
+mappath: corridor2.cfg

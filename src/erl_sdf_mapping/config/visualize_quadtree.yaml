@@ -1,0 +1,24 @@
+area_min:
+  - -25.000
+  - -25.000
+area_max:
+  - 25.000
+  - 25.000
+resolution: 0.05
+padding: 100
+bg_color:
+  - 128
+  - 128
+  - 128
+  - 255
+fg_color:
+  - 255
+  - 255
+  - 255
+  - 255
+border_color:
+  - 255
+  - 0
+  - 0
+  - 255
+border_thickness: 1

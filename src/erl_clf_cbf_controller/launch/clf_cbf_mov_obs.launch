@@ -1,0 +1,116 @@
+<launch>
+  <arg name="x" default="0" />
+  <arg name="y" default="0" />
+  <arg name="z" default="0.4" />
+  <arg name="yaw" default="0" />
+  <arg name="world_filepath" default="$(find jackal_gazebo)/worlds/cafe_world_01.world" />
+
+  <arg name="map_frame" default="map" />
+
+  <arg name="lidar_frame" default="ouster_lidar" />
+
+  <arg name="scan_topic" default="front/scan"/>
+
+  <arg name="gazebo_odom_topic" default="/gazebo_p3d/odom" />
+
+  <arg name="ctrl_odom_topic" default="$(arg gazebo_odom_topic)"/>
+  <arg name="enable_controller" default="true"/>
+
+  <!-- arguments for moving obstacle setup -->
+  <arg name="mov_obs" default="true"/>
+
+  <!-- Launch Gazebo with the specified world -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="debug" value="0" />
+    <arg name="gui" value="true" />
+    <arg name="use_sim_time" value="true" />
+    <arg name="world_name" value="$(arg world_filepath)" />
+  </include>
+
+  <node pkg="gazebo_p3d_utils" type="p3d_link_tf" name="link_odom_to_base_link"  output="log">
+    <remap from="~input" to="$(arg gazebo_odom_topic)"/>
+    <param name="parent_frame_id" value="odom"/>
+    <!-- child frame is base_link setup in jackal.gazebo -->
+  </node>
+
+  <node pkg="tf2_ros" type="static_transform_publisher" name="map_odom_transformer"
+      args="0 0 0 0 0 0 1 map odom"/>
+
+  <!-- Spawn Jackal -->
+  <include file="$(find jackal_gazebo)/launch/spawn_jackal.launch">
+    <arg name="x" value="$(arg x)" />
+    <arg name="y" value="$(arg y)" />
+    <arg name="z" value="$(arg z)" />
+    <arg name="yaw" value="$(arg yaw)" />
+    <arg name="config" value="front_laser" />
+    <arg name="joystick" value="true" />
+    <arg name="keyboard" default="false" />
+    <arg name="enable_ekf" default="false" />
+  </include>
+
+  <!-- slam hector as mapping and localization does not use external odom-->
+  <include file="$(find jackal_gazebo)/launch/jackal_hector_map.launch">
+    <arg name="scan_topic" value="$(arg scan_topic)" />
+    <arg name="map_size" value="255" />
+    <arg name="map_resolution" value="0.1" />
+    <arg name="map_frame" value="$(arg map_frame)" />
+    <arg name="map_start_x" value="0.5"/>
+    <arg name="map_start_y" value="0.5"/>
+    <arg name="map_pub_period" value="0.02"/>
+  </include>
+
+  <node name="erl_astar_ros" pkg="erl_astar_ros" type="erl_astar_2d_online_node" output="log" launch-prefix="">
+    <param name="inflation_value" value="0.25"/>
+    <param name="planning_frame" value="$(arg map_frame)" />
+    <param name="plan_freq" value="40.0"/>
+    <param name="odom_topic" value="$(arg ctrl_odom_topic)"/>
+    <param name="path_topic" value="/path"/>
+    <param name="map_topic" value="/map"/>
+    <param name="goal_topic" value="/move_base_simple/goal"/>
+  </node>
+
+  <!--- Run reference governor -->
+  <node pkg="ref_gvn_lite" type="ref_gvn_lite_node.py" name="ref_gvn_lite" output="log">
+    <param name="display_nav_path" value="true"/>
+    <param name="odom_topic" value="$(arg ctrl_odom_topic)"/>
+    <param name="path_topic" value="/path"/>
+    <param name="radius_topic" value="/sdf_val"/>
+    <param name="gvn_restart_topic" value="/gvn_restart"/>
+    <param name="ctrl_freq" value="50.0"/>
+    <param name="kg" value="2.0"/>
+  </node>
+
+  <!--- moving obstacle info node -->
+  <include file="$(find erl_moving_obstacle)/launch/mov_obs_info_vicon.launch">
+      <arg name="simulation" value="true" />
+  </include>
+
+  <group if="$(arg enable_controller)" >
+
+      <!-- add a controller type -->
+    <arg name="controller_type" default="drccp" />
+    <arg name="use_sdf" default="false" />
+    <!--- Run cone controller as low level velocity controller -->
+    <node pkg="erl_clf_cbf_controller" type="clf_cbf_controller_node.py" name="clf_cbf_controller"  output="log">
+      <param name="odom_topic" value="$(arg ctrl_odom_topic)"/>
+      <param name="path_topic" value="/path"/>
+      <param name="goal_topic" value="/ref_gvn_lite/local_goal"/>
+      <param name="ctrl_freq" value="50.0"/>
+
+      <param name="mov_obs" value="$(arg mov_obs)"/>
+      <!-- Control limits are set as the same as in control.yaml in jackal_control package -->
+      <!-- linear velocity limit m/sec-->
+      <param name="v_min" value="-2.0"/>
+      <param name="v_max" value="2.0"/>
+      <!-- angular velocity limit rad/sec-->
+      <param name="w_min" value="-2.0"/>
+      <param name="w_max" value="2.0"/>
+      <param name="controller_type" value="$(arg controller_type)" />
+      <param name="use_sdf" value="$(arg use_sdf)" />
+    </node>
+  </group >
+
+  <!--- Run rviz using config inside package -->
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find erl_clf_cbf_controller)/rviz/test_cone_controller_p3d.rviz" />
+  <node name="plt_llc" pkg="rqt_multiplot" type="rqt_multiplot" args="--multiplot-config $(find erl_clf_cbf_controller)/rqt_config/clf_cbf_rqt.xml --multiplot-run-all"/>
+</launch>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
+<launch>
+  <arg name="ns" default="pelican01" />
+  <arg name="odom" default="ground_truth/global_odom"/>
+  
+	<!-- Spawn the World -->
+  <include file="$(find erl_models)/launch/spawn_world.launch">
+    <arg name="world" value="fla_warehouse1"/>
+    <!--<arg name="scale" value="0.0254"/>-->
+    <arg name="gui" value="false"/>
+  </include>
+  
+  <!-- Spawn the Robot -->
+  <include file="$(find erl_models)/launch/spawn_robot.launch">
+    <arg name="ns" value="$(arg ns)"/>
+    <arg name="model" value="$(find erl_models)/urdf/pelican_laser/pelican_laser.gazebo.xacro"/>
+    <arg name="px" value="5.0" />
+    <arg name="py" value="0.0" />
+    <arg name="tf_prefix" value="$(arg ns)" />
+  </include>
+  
+  
+  <group ns="$(arg ns)">
+    #### Controller #####
+    <node pkg="nodelet"
+      type="nodelet"
+      args="standalone so3_control/SO3ControlNodelet"
+      name="so3_control"
+      required="true"
+      output="screen">
+      <rosparam file="$(find so3_control)/config/gains.yaml"/>
+      <param name="mass" value="0.5"/>
+      <remap from="~odom" to="$(arg odom)"/>
+      <remap from="~position_cmd" to="position_cmd"/>
+      <remap from="~so3_cmd" to="so3_cmd"/>
+      <remap from="~motors" to="motors"/>
+    </node>  
+  </group>
+  
+  <!-- Launch rviz -->
+  <node pkg="rviz" type="rviz" name="rviz"
+        args="-d $(find erl_models)/rviz/pelican01.cfg.rviz"/>
+
+</launch>
+

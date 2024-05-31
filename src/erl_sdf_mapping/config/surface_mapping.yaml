@@ -1,0 +1,64 @@
+gp_theta:
+  group_size: 26  # number of points in each group, including the overlap ones
+  overlap_size: 6
+  boundary_margin: 0.017500000000000002
+  init_variance: 1000000
+  sensor_range_var: 0.01
+  max_valid_range_var: 0.1  # drop the point if its distance variance is larger than this
+  occ_test_temperature: 30
+  train_buffer:
+    valid_range_min: 0.2
+    valid_range_max: 30
+    valid_angle_min: -3.141592653 # -2.3561944901923448
+    valid_angle_max: 3.141592653  # 2.3561944901923448
+    mapping:
+      type: kInverseSqrt
+      scale: 1
+  gp:
+    kernel_type: OrnsteinUhlenbeck1D
+    kernel:
+      x_dim: 1
+      alpha: 1
+      scale: 0.5
+      scale_mix: 1
+      weights:
+        [ ]
+    auto_normalize: false
+compute_variance:
+  zero_gradient_position_var: 1
+  zero_gradient_gradient_var: 1
+  min_distance_var: 1
+  max_distance_var: 100
+  position_var_alpha: 0.01
+  min_gradient_var: 0.01
+  max_gradient_var: 1
+update_map_points:
+  min_observable_occ: -0.1
+  max_surface_abs_occ: 0.02
+  max_valid_gradient_var: 0.8
+  max_adjust_tries: 5
+  max_bayes_position_var: 0.5
+  max_bayes_gradient_var: 0.3
+  min_position_var: 0.001
+  min_gradient_var: 0.001
+quadtree:
+  tree_depth: 16
+  log_odd_min: -2
+  log_odd_max: 10
+  log_odd_hit: 0.85
+  log_odd_miss: -0.4
+  log_odd_occ_threshold: 0
+  resolution: 0.1
+  use_change_detection: false
+  use_aabb_limit: false
+  aabb:
+    center:
+      - 0
+      - 0
+    half_sizes:
+      - 0
+      - 0
+cluster_level: 4
+perturb_delta: 0.001  # this makes the SDF prediction more smooth over time
+zero_gradient_threshold: 1.0e-10
+update_occupancy: true

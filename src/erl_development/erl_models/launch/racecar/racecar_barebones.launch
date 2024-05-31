@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
+<launch>
+  <arg name="ns" default="racecar01" />
+  
+	<!-- Spawn the World -->
+  <include file="$(find erl_models)/launch/spawn_world.launch">
+    <arg name="world" value="fla_warehouse1"/>
+    <arg name="scale" value="1"/>
+    <arg name="gui" value="false"/>
+  </include>
+
+  <!-- Spawn the Racecar -->
+  <include file="$(find erl_models)/launch/spawn_robot.launch">
+    <arg name="ns" value="$(arg ns)"/>
+    <arg name="tf_prefix" value="$(arg ns)" />    
+    <arg name="model" value="$(find erl_models)/urdf/racecar/racecar.xacro"/>
+    <arg name="px" value="5.0" />
+    <arg name="py" value="0.0" />
+    <arg name="use_groundtruth_odom" value="true" />
+  </include>
+  
+  <!-- Load joint controller configurations from YAML file to parameter server -->
+  <group ns="$(arg ns)">
+    <rosparam file="$(find erl_models)/urdf/racecar/racecar_control.yaml" command="load"/>
+  </group>
+  
+  <!-- load the controllers -->
+  <node name="controller_manager" pkg="controller_manager" type="spawner" respawn="false"
+        output="screen" ns="$(arg ns)" args="left_rear_wheel_velocity_controller right_rear_wheel_velocity_controller
+                                             left_front_wheel_velocity_controller right_front_wheel_velocity_controller
+                                             left_steering_hinge_position_controller right_steering_hinge_position_controller
+                                             joint_state_controller"/>  
+
+  <!-- Launch rviz -->
+  <node pkg="rviz" type="rviz" name="rviz"
+        args="-d $(find erl_models)/rviz/racecar01.cfg.rviz"/>
+
+</launch>
+
+
+
+
+
+
+
+
+  <!-- servo node 
+  <node pkg="erl_models" type="servo_commands.py" name="servo_commands" output="screen">
+    <remap from="/racecar/ackermann_cmd_mux/output" to="/vesc/low_level/ackermann_cmd_mux/output"/>
+    <remap from="/racecar/left_rear_wheel_velocity_controller/command" to="/$(arg ns)/left_rear_wheel_velocity_controller/command"/>
+    <remap from="/racecar/right_rear_wheel_velocity_controller/command" to="/$(arg ns)/right_rear_wheel_velocity_controller/command"/>
+    <remap from="/racecar/left_front_wheel_velocity_controller/command" to="/$(arg ns)/left_front_wheel_velocity_controller/command"/>
+    <remap from="/racecar/right_front_wheel_velocity_controller/command" to="/$(arg ns)/right_front_wheel_velocity_controller/command"/>
+    <remap from="/racecar/left_steering_hinge_position_controller/command" to="/$(arg ns)/left_steering_hinge_position_controller/command"/>
+    <remap from="/racecar/right_steering_hinge_position_controller/command" to="/$(arg ns)/right_steering_hinge_position_controller/command"/>
+  </node>
+  -->
+  
+  <!-- keyboard 
+  <node pkg="erl_models" type="racecar_keyboard_teleop.py" name="racecar_teleop_key"  output="screen">
+    <param name="scale_linear" value="0.5" type="double"/>
+    <param name="scale_angular" value="1.5" type="double"/>
+    <param name="ack_pub" value="/vesc/low_level/ackermann_cmd_mux/output"/>
+  </node>
+  -->
+  

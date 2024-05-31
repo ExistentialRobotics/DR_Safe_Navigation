@@ -1,0 +1,16 @@
+<launch>
+  <!-- Use in conjunction with scarab_gazebo/scarab_world.launch -->
+  <group ns="scarab40">
+    <node name="transformer" pkg="tf2_ros" type="static_transform_publisher"
+          args="0 0 0 0 0 0 1 map scarab40/odom_true" />
+
+    <node name="laser_odom" pkg="laser_odom" type="laser_odom"
+          output="screen" >
+      <param name="debug" value="true" />
+      <param name="base_frame" value="scarab40/odom_laser" />
+      <param name="laser_frame" value="scarab40/laser" />
+      <param name="laser_base_frame" value="scarab40/base_link" />
+      <param name="odom_frame" value="map" />
+    </node>
+  </group>
+</launch>

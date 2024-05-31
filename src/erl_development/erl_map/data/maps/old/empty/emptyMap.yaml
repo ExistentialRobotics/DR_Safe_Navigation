@@ -1,0 +1,8 @@
+# Empty Map
+mapmin: [-32, -32]
+mapmax: [32, 32]
+mapres: [.1, .1]
+origin: [0, 0]
+datatype: c
+storage: rowmajor
+mappath: emptyMap.cfg

@@ -1,0 +1,31 @@
+<package>
+  <name>car_control</name>
+  <version>1.0.0</version>
+  <description>dd_control</description>
+  <maintainer email="brentsc@seas.upenn.edu">Brent Schlotfeldt</maintainer>
+
+  <license>BSD</license>
+
+  <url type="website">http://ros.org/</url>
+  <!-- <url type="bugtracker"></url> -->
+
+  <author>Brent Schlotfeldt</author>
+
+  <!-- Dependencies which this package needs to build itself. -->
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <!-- Dependencies needed to compile this package. -->
+  <build_depend>roscpp</build_depend>
+  <build_depend>nav_msgs</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>tf</build_depend>
+
+  <!-- <build_depend>cmake_modules</build_depend> -->
+
+  <!-- Dependencies needed after this package is compiled. -->
+  <run_depend>roscpp</run_depend>
+  <run_depend>nav_msgs</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>tf</run_depend>
+
+</package>

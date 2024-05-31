@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+ 
+<robot name="mobile_rgbd" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:include filename="$(find erl_models)/urdf/mobile_rgbd/mobile_rgbd.urdf.xacro" />
+</robot>
+

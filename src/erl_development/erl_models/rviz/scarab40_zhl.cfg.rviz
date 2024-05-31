@@ -1,0 +1,731 @@
+Panels:
+  - Class: rviz/Displays
+    Help Height: 78
+    Name: Displays
+    Property Tree Widget:
+      Expanded:
+        - /TF1
+        - /TF1/Frames1
+        - /TF1/Frames1/scarab40/map1
+        - /TF1/Frames1/scarab40/odom1
+        - /TF1/Tree1
+        - /Map1
+        - /RobotModel1
+        - /Environment1
+        - /Odometry1/Covariance1
+      Splitter Ratio: 0.5
+    Tree Height: 1088
+  - Class: rviz/Selection
+    Name: Selection
+  - Class: rviz/Tool Properties
+    Expanded:
+      - /2D Pose Estimate1
+      - /2D Nav Goal1
+      - /Publish Point1
+    Name: Tool Properties
+    Splitter Ratio: 0.5886790156364441
+  - Class: rviz/Views
+    Expanded:
+      - /Current View1
+    Name: Views
+    Splitter Ratio: 0.5
+  - Class: rviz/Time
+    Experimental: false
+    Name: Time
+    SyncMode: 0
+    SyncSource: ""
+Preferences:
+  PromptSaveOnExit: true
+Toolbars:
+  toolButtonStyle: 2
+Visualization Manager:
+  Class: ""
+  Displays:
+    - Alpha: 0.5
+      Cell Size: 1
+      Class: rviz/Grid
+      Color: 160; 160; 164
+      Enabled: true
+      Line Style:
+        Line Width: 0.029999999329447746
+        Value: Lines
+      Name: Grid
+      Normal Cell Count: 0
+      Offset:
+        X: 0
+        Y: 0
+        Z: 0
+      Plane: XY
+      Plane Cell Count: 10
+      Reference Frame: <Fixed Frame>
+      Value: true
+    - Class: rviz/TF
+      Enabled: true
+      Frame Timeout: 15
+      Frames:
+        All Enabled: false
+        map:
+          Value: true
+        scarab40/base_footprint:
+          Value: true
+        scarab40/base_link:
+          Value: false
+        scarab40/camera_depth_frame:
+          Value: false
+        scarab40/camera_depth_optical_frame:
+          Value: false
+        scarab40/camera_link:
+          Value: false
+        scarab40/camera_rgb_frame:
+          Value: false
+        scarab40/camera_rgb_optical_frame:
+          Value: false
+        scarab40/caster_back_link:
+          Value: false
+        scarab40/caster_front_link:
+          Value: false
+        scarab40/cliff_sensor_front_link:
+          Value: false
+        scarab40/cliff_sensor_left_link:
+          Value: false
+        scarab40/cliff_sensor_right_link:
+          Value: false
+        scarab40/gyro_link:
+          Value: false
+        scarab40/laser:
+          Value: false
+        scarab40/map:
+          Value: true
+        scarab40/odom:
+          Value: false
+        scarab40/plate_bottom_link:
+          Value: false
+        scarab40/plate_middle_link:
+          Value: false
+        scarab40/plate_top_link:
+          Value: false
+        scarab40/pole_bottom_0_link:
+          Value: false
+        scarab40/pole_bottom_1_link:
+          Value: false
+        scarab40/pole_bottom_2_link:
+          Value: false
+        scarab40/pole_bottom_3_link:
+          Value: false
+        scarab40/pole_bottom_4_link:
+          Value: false
+        scarab40/pole_bottom_5_link:
+          Value: false
+        scarab40/pole_kinect_0_link:
+          Value: false
+        scarab40/pole_kinect_1_link:
+          Value: false
+        scarab40/pole_middle_0_link:
+          Value: false
+        scarab40/pole_middle_1_link:
+          Value: false
+        scarab40/pole_middle_2_link:
+          Value: false
+        scarab40/pole_middle_3_link:
+          Value: false
+        scarab40/pole_top_0_link:
+          Value: false
+        scarab40/pole_top_1_link:
+          Value: false
+        scarab40/pole_top_2_link:
+          Value: false
+        scarab40/pole_top_3_link:
+          Value: false
+        scarab40/velodyne:
+          Value: false
+        scarab40/velodyne_base_link:
+          Value: false
+        scarab40/vi_sensor/camera_depth_link:
+          Value: false
+        scarab40/vi_sensor/camera_depth_optical_center_link:
+          Value: false
+        scarab40/vi_sensor/camera_left_link:
+          Value: false
+        scarab40/vi_sensor/camera_left_optical_link:
+          Value: false
+        scarab40/vi_sensor/camera_right_link:
+          Value: false
+        scarab40/vi_sensor/imu_link:
+          Value: false
+        scarab40/vi_sensor/vi_sensor_link:
+          Value: false
+        scarab40/wheel_left_link:
+          Value: false
+        scarab40/wheel_right_link:
+          Value: false
+      Marker Scale: 0.699999988079071
+      Name: TF
+      Show Arrows: true
+      Show Axes: true
+      Show Names: true
+      Tree:
+        map:
+          scarab40/map:
+            scarab40/odom:
+              scarab40/base_footprint:
+                scarab40/base_link:
+                  scarab40/camera_rgb_frame:
+                    scarab40/camera_depth_frame:
+                      scarab40/camera_depth_optical_frame:
+                        {}
+                    scarab40/camera_link:
+                      {}
+                    scarab40/camera_rgb_optical_frame:
+                      {}
+                  scarab40/caster_back_link:
+                    {}
+                  scarab40/caster_front_link:
+                    {}
+                  scarab40/cliff_sensor_front_link:
+                    {}
+                  scarab40/cliff_sensor_left_link:
+                    {}
+                  scarab40/cliff_sensor_right_link:
+                    {}
+                  scarab40/gyro_link:
+                    {}
+                  scarab40/laser:
+                    {}
+                  scarab40/plate_bottom_link:
+                    {}
+                  scarab40/plate_middle_link:
+                    {}
+                  scarab40/plate_top_link:
+                    {}
+                  scarab40/pole_bottom_0_link:
+                    {}
+                  scarab40/pole_bottom_1_link:
+                    {}
+                  scarab40/pole_bottom_2_link:
+                    {}
+                  scarab40/pole_bottom_3_link:
+                    {}
+                  scarab40/pole_bottom_4_link:
+                    {}
+                  scarab40/pole_bottom_5_link:
+                    {}
+                  scarab40/pole_kinect_0_link:
+                    {}
+                  scarab40/pole_kinect_1_link:
+                    {}
+                  scarab40/pole_middle_0_link:
+                    {}
+                  scarab40/pole_middle_1_link:
+                    {}
+                  scarab40/pole_middle_2_link:
+                    {}
+                  scarab40/pole_middle_3_link:
+                    {}
+                  scarab40/pole_top_0_link:
+                    {}
+                  scarab40/pole_top_1_link:
+                    {}
+                  scarab40/pole_top_2_link:
+                    {}
+                  scarab40/pole_top_3_link:
+                    {}
+                  scarab40/velodyne_base_link:
+                    scarab40/velodyne:
+                      {}
+                  scarab40/vi_sensor/vi_sensor_link:
+                    scarab40/vi_sensor/camera_depth_link:
+                      scarab40/vi_sensor/camera_depth_optical_center_link:
+                        {}
+                    scarab40/vi_sensor/camera_left_link:
+                      scarab40/vi_sensor/camera_left_optical_link:
+                        {}
+                    scarab40/vi_sensor/camera_right_link:
+                      {}
+                    scarab40/vi_sensor/imu_link:
+                      {}
+                  scarab40/wheel_left_link:
+                    {}
+                  scarab40/wheel_right_link:
+                    {}
+      Update Interval: 0
+      Value: true
+    - Alpha: 0.699999988079071
+      Class: rviz/Map
+      Color Scheme: map
+      Draw Behind: false
+      Enabled: false
+      Name: Map
+      Topic: /scarab40/map
+      Unreliable: false
+      Use Timestamp: false
+      Value: false
+    - Alpha: 0.30000001192092896
+      Class: rviz/RobotModel
+      Collision Enabled: false
+      Enabled: true
+      Links:
+        All Links Enabled: true
+        Expand Joint Details: false
+        Expand Link Details: false
+        Expand Tree: false
+        Link Tree Style: Links in Alphabetic Order
+        base_footprint:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        camera_depth_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        camera_depth_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        camera_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        camera_rgb_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        camera_rgb_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        caster_back_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        caster_front_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        cliff_sensor_front_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        cliff_sensor_left_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        cliff_sensor_right_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        gyro_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        laser:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        plate_bottom_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        plate_middle_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        plate_top_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        pole_bottom_0_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        pole_bottom_1_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        pole_bottom_2_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        pole_bottom_3_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        pole_bottom_4_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        pole_bottom_5_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        pole_kinect_0_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        pole_kinect_1_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        pole_middle_0_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        pole_middle_1_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        pole_middle_2_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        pole_middle_3_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        pole_top_0_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        pole_top_1_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        pole_top_2_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        pole_top_3_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        velodyne:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        velodyne_base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        vi_sensor/camera_depth_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        vi_sensor/camera_depth_optical_center_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        vi_sensor/camera_left_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        vi_sensor/camera_left_optical_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        vi_sensor/camera_right_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        vi_sensor/imu_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        vi_sensor/vi_sensor_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        wheel_left_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        wheel_right_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+      Name: RobotModel
+      Robot Description: scarab40/robot_description
+      TF Prefix: scarab40
+      Update Interval: 0
+      Value: true
+      Visual Enabled: true
+    - Class: rviz/Camera
+      Enabled: false
+      Image Rendering: background and overlay
+      Image Topic: /scarab40/camera/rgb/image_raw
+      Name: Camera
+      Overlay Alpha: 0.5
+      Queue Size: 2
+      Transport Hint: raw
+      Unreliable: false
+      Value: false
+      Visibility:
+        Environment: true
+        Grid: true
+        LaserScan: true
+        Map: true
+        Odometry: true
+        OdometryTrue: true
+        Path: true
+        RobotModel: true
+        TF: true
+        Value: true
+        VelodyneCloud: true
+      Zoom Factor: 1
+    - Alpha: 1
+      Buffer Length: 1
+      Class: rviz/Path
+      Color: 25; 255; 0
+      Enabled: false
+      Head Diameter: 0.30000001192092896
+      Head Length: 0.20000000298023224
+      Length: 0.30000001192092896
+      Line Style: Lines
+      Line Width: 0.029999999329447746
+      Name: Path
+      Offset:
+        X: 0
+        Y: 0
+        Z: 0
+      Pose Color: 255; 85; 255
+      Pose Style: None
+      Radius: 0.029999999329447746
+      Shaft Diameter: 0.10000000149011612
+      Shaft Length: 0.10000000149011612
+      Topic: /scarab40/path
+      Unreliable: false
+      Value: false
+    - Class: rviz/Marker
+      Enabled: false
+      Marker Topic: /env_vis/mesh
+      Name: Environment
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: false
+    - Angle Tolerance: 0.10000000149011612
+      Class: rviz/Odometry
+      Covariance:
+        Orientation:
+          Alpha: 0.5
+          Color: 255; 255; 127
+          Color Style: Unique
+          Frame: Local
+          Offset: 1
+          Scale: 1
+          Value: true
+        Position:
+          Alpha: 0.30000001192092896
+          Color: 204; 51; 204
+          Scale: 1
+          Value: true
+        Value: false
+      Enabled: false
+      Keep: 0
+      Name: OdometryTrue
+      Position Tolerance: 0.4000000059604645
+      Shape:
+        Alpha: 1
+        Axes Length: 1
+        Axes Radius: 0.10000000149011612
+        Color: 255; 25; 0
+        Head Length: 0.30000001192092896
+        Head Radius: 0.10000000149011612
+        Shaft Length: 1
+        Shaft Radius: 0.05000000074505806
+        Value: Arrow
+      Topic: /scarab40/ground_truth/odom
+      Unreliable: false
+      Value: false
+    - Angle Tolerance: 0.10000000149011612
+      Class: rviz/Odometry
+      Covariance:
+        Orientation:
+          Alpha: 0.5
+          Color: 255; 255; 127
+          Color Style: Unique
+          Frame: Local
+          Offset: 1
+          Scale: 1
+          Value: false
+        Position:
+          Alpha: 0.30000001192092896
+          Color: 204; 51; 204
+          Scale: 1
+          Value: true
+        Value: false
+      Enabled: false
+      Keep: 100
+      Name: Odometry
+      Position Tolerance: 0.4000000059604645
+      Shape:
+        Alpha: 1
+        Axes Length: 1
+        Axes Radius: 0.10000000149011612
+        Color: 255; 25; 0
+        Head Length: 0.30000001192092896
+        Head Radius: 0.10000000149011612
+        Shaft Length: 1
+        Shaft Radius: 0.05000000074505806
+        Value: Arrow
+      Topic: /scarab40/odom
+      Unreliable: false
+      Value: false
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz/PointCloud2
+      Color: 255; 255; 255
+      Color Transformer: Intensity
+      Decay Time: 0
+      Enabled: false
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Min Color: 0; 0; 0
+      Name: VelodyneCloud
+      Position Transformer: XYZ
+      Queue Size: 10
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.009999999776482582
+      Style: Flat Squares
+      Topic: /scarab40/velodyne/point_cloud
+      Unreliable: false
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: false
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz/LaserScan
+      Color: 255; 255; 255
+      Color Transformer: Intensity
+      Decay Time: 0
+      Enabled: false
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Min Color: 0; 0; 0
+      Name: LaserScan
+      Position Transformer: XYZ
+      Queue Size: 10
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.009999999776482582
+      Style: Flat Squares
+      Topic: /scarab40/scan
+      Unreliable: false
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: false
+  Enabled: true
+  Global Options:
+    Background Color: 48; 48; 48
+    Default Light: true
+    Fixed Frame: scarab40/map
+    Frame Rate: 30
+  Name: root
+  Tools:
+    - Class: rviz/Interact
+      Hide Inactive Objects: true
+    - Class: rviz/MoveCamera
+    - Class: rviz/Select
+    - Class: rviz/FocusCamera
+    - Class: rviz/Measure
+    - Class: rviz/SetInitialPose
+      Theta std deviation: 0.2617993950843811
+      Topic: /initialpose
+      X std deviation: 0.5
+      Y std deviation: 0.5
+    - Class: rviz/SetGoal
+      Topic: scarab40/move_base_simple/goal
+    - Class: rviz/PublishPoint
+      Single click: true
+      Topic: /clicked_point
+  Value: true
+  Views:
+    Current:
+      Class: rviz/XYOrbit
+      Distance: 4.199699401855469
+      Enable Stereo Rendering:
+        Stereo Eye Separation: 0.05999999865889549
+        Stereo Focal Distance: 1
+        Swap Stereo Eyes: false
+        Value: false
+      Focal Point:
+        X: -0.7826189994812012
+        Y: -0.29211509227752686
+        Z: 9.5367431640625e-7
+      Focal Shape Fixed Size: true
+      Focal Shape Size: 0.05000000074505806
+      Invert Z Axis: false
+      Name: Current View
+      Near Clip Distance: 0.009999999776482582
+      Pitch: 0.9303983449935913
+      Target Frame: <Fixed Frame>
+      Value: XYOrbit (rviz)
+      Yaw: 2.9853999614715576
+    Saved: ~
+Window Geometry:
+  Camera:
+    collapsed: false
+  Displays:
+    collapsed: false
+  Height: 1385
+  Hide Left Dock: false
+  Hide Right Dock: false
+  QMainWindow State: 000000ff00000000fd0000000400000000000003b2000004cbfc020000000afb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000219000000eafb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000003d000004cb000000c900fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb0000000a0049006d006100670065010000026a000000d80000000000000000fb0000000c00430061006d00650072006100000003d3000001350000001600ffffff000000010000010f000004cbfc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073010000003d000004cb000000a400fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000009bd0000003efc0100000002fb0000000800540069006d00650100000000000009bd000002eb00fffffffb0000000800540069006d00650100000000000004500000000000000000000004f0000004cb00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  Selection:
+    collapsed: false
+  Time:
+    collapsed: false
+  Tool Properties:
+    collapsed: false
+  Views:
+    collapsed: false
+  Width: 2493
+  X: 67
+  Y: 52

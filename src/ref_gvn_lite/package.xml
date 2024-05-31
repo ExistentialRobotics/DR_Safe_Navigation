@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>ref_gvn_lite</name>
+  <version>0.0.0</version>
+  <description>The ref_gvn_lite package</description>
+
+  <maintainer email="yiyi@ucsd.edu">yzy</maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>erl_msgs</depend>
+</package>

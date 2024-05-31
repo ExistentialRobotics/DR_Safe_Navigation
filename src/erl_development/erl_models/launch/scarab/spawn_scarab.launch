@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
+<launch>
+  <arg name="ns" default="scarab40"/>
+  <arg name="raw_odom" default="ground_truth/global_odom"/>
+  <arg name="odom" default="odom"/>
+  <arg name="range" default="2"/>
+  <arg name="alpha" default="0.6"/>
+  <arg name="red" default="0.1"/>
+  <arg name="green" default="0"/>
+  <arg name="blue" default="1"/>
+  <arg name="odom_frame" default="map"/>
+  <arg name="robot_frame" default="$(arg ns)/base_link"/>
+
+  <arg name="x" default="0.0"/>
+  <arg name="y" default="0.0"/>
+  <arg name="z" default="0.0"/>
+  <arg name="Y" default="0.0"/>
+
+
+  <!-- Spawn the Scarab -->
+  <include file="$(find erl_models)/launch/spawn_robot.launch">
+    <arg name="ns" value="$(arg ns)"/>
+    <arg name="tf_prefix" value="$(arg ns)" />
+    <arg name="model" value="$(find erl_models)/urdf/scarab/scarab.xacro"/>
+    <arg name="px" value="$(arg x)" />
+    <arg name="py" value="$(arg y)" />
+    <arg name="pz" value="$(arg z)" />
+    <arg name="pY" value="$(arg Y)" />
+    <arg name="use_groundtruth_odom" value="true" />
+  </include>
+
+  <group ns="$(arg ns)">
+    <!-- Launch Trajectory Tracker (State Machine) -->
+    <node pkg="erl_trackers"
+          type="dd_tracker_simple"
+          name="dd_tracker"
+          output="screen">
+        <remap from="~mode" to="mode"/>
+        <remap from="~motors" to="motors"/>
+        <remap from="~position_cmd" to="position_cmd"/>
+        <remap from="~traj" to="traj"/>
+        <param name="max_v_xy" value="2"/>
+        <param name="x" value="0.0"/>
+        <param name="y" value="-7.0"/>
+        <param name="z" value="0.0"/>
+    </node>
+      <!-- Launch Local Controller -->
+      <node name="power_diagram_node" pkg="car_control" type="power_diagram_node" args="">
+          <remap from="~position_cmd" to="position_cmd"/>
+          <remap from="~odom" to="ground_truth/global_odom"/>
+          <remap from="~commands" to="mobile_base/commands/velocity"/>
+          <rosparam file="$(find car_control)/config/power_diagram_gains.yaml"/>
+      </node>
+
+  </group>
+</launch>

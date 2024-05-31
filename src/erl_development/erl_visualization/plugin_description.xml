@@ -1,0 +1,26 @@
+<library path="lib/liberl_rviz_plugins">
+  <class name="erl_rviz_plugins/PointTrajectory"
+    type="erl_rviz_plugins::PointTrajectoryDisplay"
+    base_class_type="rviz::Display">
+    <description>
+      Visualize erl_msgs/PointTrajectory msg.
+    </description>
+  </class>
+
+  <class name="erl_rviz_plugins/PrimitiveTrajectory"
+         type="erl_rviz_plugins::PrimitiveTrajectoryDisplay"
+         base_class_type="rviz::Display">
+    <description>
+      Visualize erl_msgs/PrimitiveTrajectory msg.
+    </description>
+  </class>
+
+  <class name="erl_rviz_plugins/PointTrajectoryArray"
+    type="erl_rviz_plugins::PointTrajectoryArrayDisplay"
+    base_class_type="rviz::Display">
+    <description>
+      Visualize erl_msgs/PointTrajectoryArray msg.
+    </description>
+  </class>  
+</library>
+

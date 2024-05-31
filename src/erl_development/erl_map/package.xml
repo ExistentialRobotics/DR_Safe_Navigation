@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>erl_map</name>
+  <version>0.0.1</version>
+  <description>The erl_map package</description>
+  <maintainer email="natanasov@ucsd.edu">Nikolay Atanasov</maintainer>
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>catkin_simple</build_depend>
+  <depend>pybind11_catkin</depend>
+
+  <!-- <depend>roscpp</depend> -->
+  
+  <test_depend>gtest</test_depend>
+  
+  
+  <!--
+  <export>
+    <build_type>cmake</build_type> 
+  </export>
+  -->
+
+  <!-- ERL_dependency -->
+  <depend>erl_utilities</depend>
+</package>
+

@@ -1,0 +1,27 @@
+num_threads: 64
+update_hz: 20
+log_timing: true
+gp_sdf_area_scale: 4
+offset_distance: 0.08
+max_valid_gradient_var: 0.001
+invalid_position_var: 0.005
+train_gp_immediately: false
+gp_sdf:
+  kernel_type: Matern32_2D
+  kernel:
+    x_dim: 2
+    alpha: 1
+    scale: 2.0
+    scale_mix: 1
+    weights:
+      [ ]
+  log_lambda: 40
+  edf_threshold: 0.1
+  max_num_samples: 256   # max dataset size
+test_query:
+  max_test_valid_distance_var: 0.2
+  search_area_half_size: 2
+  use_nearest_only: false
+  compute_covariance: false  # whether to compute covariance
+  recompute_variance: true
+  softmax_temperature: 5

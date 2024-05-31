@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+
+<robot name="quadrotor" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:property name="pi" value="3.1415926535897931" />
+  <xacro:property name="mass" value="0.5" />
+  <xacro:property name="ixx" value="0.00264" />
+  <xacro:property name="iyy" value="0.00264" />
+  <xacro:property name="izz" value="0.00496" />
+
+  <!-- Main quadrotor link -->
+  <xacro:macro name="quadrotor_base_macro">
+    <link name="base_link">
+      <inertial>
+        <!--mass value="1.477" /-->
+        <mass value="${mass}"/>
+        <origin xyz="0 0 0" />
+        <inertia ixx="${ixx}" ixy="0.0" ixz="0.0" iyy="${iyy}" iyz="0.0" izz="${izz}" />
+      </inertial>
+
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://erl_models/models/hummingbird/hummingbird.dae"/>
+        </geometry>
+      </visual>
+
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://erl_models/models/hummingbird/hummingbird.stl"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <!-- Plugins -->
+    <gazebo>
+
+      <!-- Quad Ground Truth Plugin -->
+      <plugin name="quadrotor_groundtruth_sim" filename="libgazebo_ros_p3d.so">
+        <robotNamespace>$(arg robot_name)</robotNamespace>
+        <updateRate>100.0</updateRate>
+        <bodyName>base_link</bodyName>
+        <topicName>ground_truth/global_odom</topicName>
+        <gaussianNoise>0.0</gaussianNoise>
+        <frameName>map</frameName>
+      </plugin>
+
+      <!-- Quad Dynamics Plugin -->
+      <plugin name="test" filename="libmrsl_quadrotor_propulsion.so">
+        <command_topic>so3_cmd</command_topic>
+        <odom_topic>ground_truth/global_odom</odom_topic>
+      </plugin>
+
+      </gazebo>
+
+  </xacro:macro>
+
+  <xacro:quadrotor_base_macro/>
+</robot>
+

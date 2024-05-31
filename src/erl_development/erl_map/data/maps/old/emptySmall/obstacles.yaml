@@ -1,0 +1,7 @@
+datatype: t
+mapdim: [50, 50]
+mapmax: [10, 10]
+mapmin: [0.0, 0.0]
+mappath: obstacles.cfg
+mapres: [0.2, 0.2]
+storage: colmajor

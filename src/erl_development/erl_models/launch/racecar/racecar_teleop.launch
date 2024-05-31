@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
+<launch>
+  <arg name="ns" default="racecar01"/>
+  <arg name="run_camera" default="false"/>
+  <arg name="joy_teleop_config"
+       default="$(find racecar)/config/$(arg ns)/joy_teleop.yaml" />
+  <arg name="use_joy" default="false" />
+
+  <group if="$(arg use_joy)">
+  <!-- joystick -->
+    <rosparam file="$(arg joy_teleop_config)" command="load" />
+
+    <node respawn="true" pkg="joy" type="joy_node" name="racecar_joy" />
+
+    <node pkg="racecar" type="joy_teleop.py" name="joy_teleop" />
+  </group>
+
+  <!-- keyboard -->
+  <group unless="$(arg use_joy)">
+    <node pkg="racecar" type="keyboard_teleop.py" name="racecar_teleop_key"  output="screen">
+      <param name="scale_linear" value="0.5" type="double"/>
+      <param name="scale_angular" value="1.5" type="double"/>
+      <param name="ack_pub" value="vesc/low_level/ackermann_cmd_mux/input/teleop"/>
+    </node>
+  </group>
+
+</launch>
+
+
+

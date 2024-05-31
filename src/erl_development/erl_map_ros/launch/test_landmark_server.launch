@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<launch>
+  
+  <!--<arg name="model_name" default="fla_warehouse1" />-->
+  <!--<arg name="model_name" default="circles_2d" />-->
+  <!--<arg name="model_name" default="large_map_2d" />-->
+  <!--<arg name="model_name" default="pretzel" />  -->
+  <!--<arg name="model_name" default="sikang_map_2d" />-->
+  <!--<arg name="model_name" default="sikang_map_3d" />-->
+  <!--<arg name="model_name" default="small_map_2d" />-->
+  
+  <arg name="model_name" default="sikang_map_3d" />
+  <arg name="map_file" default="$(find erl_models)/models/$(arg model_name)/$(arg model_name).yaml"/>
+  <arg name="landmark_file" default="$(find erl_estimation_ros)/data/landmark_cfg1.yaml"/>
+
+  
+  <!-- Run the map server -->
+  <node name="gridmap_server" pkg="erl_map_ros" type="gridmap_server" output="screen" args="$(arg map_file) $(arg landmark_file)" />
+
+  <!-- Visualize in rviz -->
+  <node pkg="erl_visualization" type="grid_msg_visualization" name="grid_visualization" output="screen">
+    <param name="world_frame" value="map"/>
+    <remap from="~grid_msg" to="map" />
+  </node>
+  
+  <node pkg="rviz" type="rviz" name="rviz" output="screen"
+    args="-d $(find erl_map_ros)/rviz/test_gridmap_server.rviz"/>
+
+</launch>

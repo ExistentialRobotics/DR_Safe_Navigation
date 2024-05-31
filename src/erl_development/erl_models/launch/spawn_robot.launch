@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
+<launch>
+  <arg name="ns"/>
+  <arg name="model"/>
+  <arg name="px" default="0.0" />
+  <arg name="py" default="0.0" />
+  <arg name="pz" default="0.0" />
+  <arg name="pY" default="0.0" />
+  <arg name="pP" default="0.0" />
+  <arg name="pR" default="0.0" />
+  <arg name="world_frame" default="map"/>
+  <arg name="tf_prefix" default=""/> <!-- THIS IS IMPORTANT for automated TF namespacing for some robot models!! -->
+  <arg name="use_groundtruth_odom" default="true"/>
+  <!--<arg name="mesh" default=""/>-->
+  
+
+  <group ns="$(arg ns)">
+    <!-- publish transform from world to robot map frame -->
+    <node pkg="tf2_ros" type="static_transform_publisher" name="local_map_transformer"
+      args="$(arg px) $(arg py) $(arg pz) $(arg pY) $(arg pP) $(arg pR) $(arg world_frame) $(arg ns)/$(arg world_frame)"/>
+
+    <param name="robot_description" command="$(find xacro)/xacro '$(arg model)' robot_name:=$(arg ns)"/>
+
+    <!-- spawn the robot -->
+    <node name="spawn_robot" 
+      pkg="gazebo_ros" 
+      type="spawn_model"
+      respawn="false"
+      output="screen"
+      args="-urdf
+      -model $(arg ns)
+      -param robot_description
+      -x $(arg px) -y $(arg py) -z $(arg pz)
+      -Y $(arg pY) -R $(arg pR) -P $(arg pP)"
+      />
+
+    <!-- Publish the tf tree -->
+    <node name="state_publisher" type="robot_state_publisher" pkg="robot_state_publisher" output="screen">
+      <param name="tf_prefix" value="$(arg tf_prefix)" /> <!-- THIS IS IMPORTANT for automated TF namespacing for some robot models!! -->
+      <!-- <remap from="robot_description" to="$(arg ns)/robot_description" /> -->
+      <!-- <param name="publish_frequency" type="double" value="30.0" /> -->
+      <!-- <param name="whitelist" value="base,camera,laser,hokuyo" /> -->
+      <!-- <param name="use_tf_static" value="false"/> -->
+    </node>   
+
+
+    <!-- Use this for simulations with ground truth odometry.  --> 
+    <group if="$(arg use_groundtruth_odom)">
+      <node pkg="tf2_ros" type="static_transform_publisher" name="map_odom_transformer"
+          args="0 0 0 0 0 0 1 $(arg ns)/$(arg world_frame) $(arg ns)/odom"/>
+
+      <!-- published odom to base_footprint transform -->
+      <node name="odom_to_tf" pkg="erl_models" type="odom_to_tf" output="screen">
+        <remap from="~input" to="ground_truth/global_odom"/>
+        <remap from="~output" to="ground_truth/odom"/>
+        <param name="tf_prefix" value="$(arg tf_prefix)" />
+      </node>
+    </group>
+
+  </group>  
+  
+</launch>
+
+
+  <!-- Visualize a dae file in rviz -->
+<!--   <node pkg="erl_visualization"
+    type="mesh_visualization"
+    name="$(arg ns)_vis" output="screen">
+    <remap from="~odom" to="$(arg ns)/ground_truth/odom"/>
+    <param name="mesh_resource" value="$(arg mesh)"/>
+    <param name="world_frame" value="$(arg world_frame)"/>
+    <param name="scale" value="1.0"/>
+    <param name="is_static" type="bool" value="false"/>
+  </node>
+ -->
+ 

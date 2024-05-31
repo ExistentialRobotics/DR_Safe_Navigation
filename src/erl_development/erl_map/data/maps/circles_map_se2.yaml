@@ -1,0 +1,13 @@
+mapmin: [-0.05000000000000426, -0.05000000000000426]
+mapmax: [100.05, 100.05]
+mapres: [0.1, 0.1]
+mapdim: [1001, 1001]
+origin: [50, 50]
+origincells: [500, 500]
+datatype: a
+storage: colmajor
+mappath: circles_map_se2.cfg
+# A* Parameters
+start: [10, 90, 0]
+goal: [50, 1, 0]
+epsilon: 2

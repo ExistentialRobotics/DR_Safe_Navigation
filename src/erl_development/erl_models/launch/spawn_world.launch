@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
+<launch>
+  <env name="GAZEBO_MODEL_PATH" value="$(find erl_models)/models:$(optenv GAZEBO_MODEL_PATH)"/>
+  <arg name="world" default="empty"/>
+  <arg name="world_frame" default="map"/>
+  <arg name="scale" default="1.0"/>
+  <arg name="gui" default="false"/>
+  <arg name="headless" default="true"/>
+  
+  <!-- Load world -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find erl_models)/worlds/$(arg world).world"/>
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="$(arg gui)"/>
+    <arg name="headless" value="$(arg headless)"/>
+    <arg name="debug" value="false"/>
+  </include>
+
+  <!-- Visualize a dae file in rviz -->
+  <node pkg="erl_models"
+    type="mesh_visualization"
+    name="env_vis">
+    <param name="mesh_resource" value="package://erl_models/models/$(arg world)/$(arg world).dae"/>
+    <param name="world_frame" value="$(arg world_frame)"/>
+    <param name="scale" value="$(arg scale)"/>
+    <param name="is_static" type="bool" value="true"/>
+  </node>
+
+</launch>
+

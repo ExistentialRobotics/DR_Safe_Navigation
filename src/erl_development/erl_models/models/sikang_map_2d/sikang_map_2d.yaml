@@ -1,0 +1,9 @@
+mapmin: [-0.5, -0.5]
+mapmax: [400.5, 400.5]
+mapres: [1, 1]
+mapdim: [401, 401]
+origin: [200, 200]
+origincells: [200, 200]
+datatype: a  # int8_t
+storage: colmajor
+mappath: sikang_map_2d.cfg

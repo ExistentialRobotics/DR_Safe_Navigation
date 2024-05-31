@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
+<launch>
+  <arg name="ns" default="scarab40"/>
+  <arg name="raw_odom" default="ground_truth/global_odom"/>
+  <arg name="odom" default="odom"/>
+  <arg name="range" default="2"/>
+  <arg name="alpha" default="0.6"/>
+  <arg name="red" default="0.1"/>
+  <arg name="green" default="0"/>
+  <arg name="blue" default="1"/>
+  <arg name="odom_frame" default="map"/>
+  <arg name="robot_frame" default="$(arg ns)/base_link"/>
+
+  <!-- Do not spawn robot y at 0 collide with env? -->
+  <arg name="x" default="1.0"/>
+  <arg name="y" default="0.5"/>
+  <arg name="z" default="0.0"/>
+  <arg name="Y" default="0.0"/>
+
+
+
+	<!-- Spawn the World -->
+  <include file="$(find erl_models)/launch/spawn_world.launch">
+    <arg name="world" value="levine"/>
+    <arg name="scale" value="1"/>
+    <arg name="gui" value="false"/>
+  </include>
+  
+  <!-- Spawn the Scarab -->
+  <include file="$(find erl_models)/launch/spawn_robot.launch">
+    <arg name="ns" value="$(arg ns)"/>
+    <arg name="tf_prefix" value="$(arg ns)" />
+    <arg name="model" value="$(find erl_models)/urdf/scarab/scarab.xacro"/>
+    <arg name="px" value="$(arg x)" />
+    <arg name="py" value="$(arg y)" />
+    <arg name="pz" value="$(arg z)" />
+    <arg name="pY" value="$(arg Y)" />
+    <arg name="use_groundtruth_odom" value="true" />
+  </include>
+
+
+    <!-- Launch rviz -->
+  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find erl_models)/rviz/scarab40_zhl.cfg.rviz"/>
+
+</launch>

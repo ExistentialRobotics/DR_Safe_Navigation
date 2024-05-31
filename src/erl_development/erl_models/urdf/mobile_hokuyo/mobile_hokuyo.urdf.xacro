@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+
+<robot name="mobile_hokuyo" xmlns:xacro="http://ros.org/wiki/xacro">
+  <!-- Main link -->
+  <xacro:macro name="mobile_hokuyo_base_macro">
+    <arg name="robot_name" default="mobile_hokuyo"/>
+    <xacro:property name="mass" value="0.2" />
+    <link name="$(arg robot_name)/base_link">
+      <inertial>
+        <mass value="${mass}"/>
+        <origin xyz="0 0 0" />
+        <inertia ixx="0.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="0.0" />
+      </inertial>
+    </link>
+  </xacro:macro>
+  <xacro:mobile_hokuyo_base_macro/>
+  
+  <!-- Lidar link -->
+  <xacro:include filename="$(find erl_models)/urdf/sensors/hokuyo_utm30lx.urdf.xacro" />
+  <xacro:hokuyo_utm30lx name="/$(arg robot_name)/laser" parent="$(arg robot_name)/base_link" ros_topic="scan" update_rate="40" ray_count="1081" min_angle="-135" max_angle="135">
+    <origin xyz="0.0 0.0 0.2" rpy="0 0 0"/>
+  </xacro:hokuyo_utm30lx>
+  
+  <!-- Plugins -->
+  <gazebo>
+    <!-- Ground Truth Odom Plugin -->
+    <plugin name="hokuyo_groundtruth_sim" filename="libgazebo_ros_p3d.so">
+      <robotNamespace>$(arg robot_name)</robotNamespace>
+      <updateRate>100.0</updateRate>
+      <bodyName>$(arg robot_name)/base_link</bodyName> <!-- this does not work...-->
+      <topicName>ground_truth/odom</topicName>
+      <gaussianNoise>0.0</gaussianNoise>
+      <frameName>map</frameName>
+    </plugin>
+  </gazebo>
+</robot>
+
+
+

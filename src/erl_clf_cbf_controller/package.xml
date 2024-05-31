@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>erl_clf_cbf_controller</name>
+  <version>0.0.0</version>
+  <description>The clf_cbf_controller package for kinematic model of Jackal</description>
+
+  <maintainer email="yiyi@ucsd.edu">hw</maintainer>
+  <license>BSD</license>
+
+  <depend>rospy</depend>
+  <depend>ros_numpy</depend>
+  <depend>ref_gvn_lite</depend>
+  <depend>jackal_gazebo</depend>
+  <depend>erl_common</depend>
+  <depend>erl_moving_obstacle</depend>
+  <depend>erl_astar_ros</depend>
+  <depend>gazebo_p3d_utils</depend>
+  <depend>jackal_control</depend>
+  <depend>jackal_description</depend>
+  <buildtool_depend>catkin</buildtool_depend>
+
+</package>

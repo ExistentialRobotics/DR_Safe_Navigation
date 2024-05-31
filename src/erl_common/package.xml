@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<package format="2">
+    <name>erl_common</name>
+    <version>0.1.0</version>
+    <description>erl_common is a C++ module commonly used by other modules</description>
+    <author email="daizhirui@hotmail.com">Zhirui Dai</author>
+    <maintainer email="daizhirui@hotmail.com">Zhirui Dai</maintainer>
+    <license>MIT</license>
+    <url type="repository">https://github.com/ExistentialRobotics/erl_common.git</url>
+
+    <buildtool_depend>catkin</buildtool_depend>
+
+    <depend>roscpp</depend>
+
+    <build_depend>Eigen3</build_depend>
+    <build_depend>OpenCV</build_depend>
+    <build_depend>yaml-cpp</build_depend>
+    <build_depend>OpenMP</build_depend>
+    <build_depend>MKL</build_depend>
+    <build_depend>LAPACK</build_depend>
+    <build_depend>absl</build_depend>
+    <build_depend>fmt</build_depend>
+
+    <build_export_depend>Eigen3</build_export_depend>  <!-- header only -->
+    <build_export_depend>OpenCV</build_export_depend>
+    <build_export_depend>yaml-cpp</build_export_depend>
+    <build_export_depend>OpenMP</build_export_depend>
+    <build_export_depend>MKL</build_export_depend>
+    <build_export_depend>LAPACK</build_export_depend>
+    <build_export_depend>absl</build_export_depend>
+    <build_export_depend>fmt</build_export_depend>
+
+    <exec_depend>OpenCV</exec_depend>
+    <exec_depend>yaml-cpp</exec_depend>
+    <exec_depend>OpenMP</exec_depend>
+    <exec_depend>MKL</exec_depend>
+    <exec_depend>LAPACK</exec_depend>
+    <exec_depend>absl</exec_depend>
+    <exec_depend>fmt</exec_depend>
+
+</package>

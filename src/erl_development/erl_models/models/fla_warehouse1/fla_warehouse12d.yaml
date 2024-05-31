@@ -1,0 +1,9 @@
+mapmin: [-11.25739348144532, -12.21107829284668]
+mapmax: [74.16280651855469, 19.10712170715332]
+mapres: [0.0762, 0.0762]
+mapdim: [1121, 411]
+origin: [31.45270651855468, 3.44802170715332]
+origincells: [560, 205]
+datatype: a
+storage: rowmajor
+mappath: fla_warehouse12d.cfg

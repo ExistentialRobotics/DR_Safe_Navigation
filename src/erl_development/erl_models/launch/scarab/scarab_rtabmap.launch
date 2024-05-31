@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="ns"		default="scarab40" />
+
+  <!-- Spawn the World -->
+  <include file="$(find erl_models)/launch/spawn_world.launch">
+    <arg name="world" value="fla_warehouse1"/>
+    <arg name="scale" value="1"/>
+    <arg name="gui" value="false"/>
+  </include>
+
+  <!-- Spawn the Scarab -->
+  <include file="$(find erl_models)/launch/spawn_robot.launch">
+    <arg name="ns" value="$(arg ns)"/>
+    <arg name="model" value="$(find erl_models)/urdf/scarab/scarab.xacro"/>
+    <arg name="px" value="5.0" />
+    <arg name="py" value="0.0" />
+    <arg name="tf_prefix" value="$(arg ns)" />
+  </include>
+
+  <!-- Enable Teleop with Keyboard -->
+  <include file="$(find erl_models)/launch/scarab/scarab_teleop.launch">
+    <arg name="use_joy" value="false"/>
+  </include>
+
+  <!-- Launch rviz -->
+  <node pkg="rviz" type="rviz" name="rviz"
+        args="-d $(find erl_models)/rviz/scarab40.cfg.rviz"/>
+
+  <!-- RTAB-map Node-->
+  <include file="$(find rtabmap_ros)/launch/rtabmap.launch">
+    <arg name="namespace"               value="$(arg ns)"/>
+    <arg name="rtabmap_args"		value="--delete_db_on_start" />
+    <arg name="rviz"                    default="false" />
+    <arg name="rtabmapviz"              default="true" /> 
+    <arg name="rgb_topic"               value="/$(arg ns)/camera/rgb/image_raw" />
+    <arg name="depth_topic"             value="/$(arg ns)/camera/depth/image_raw" />
+    <arg name="camera_info_topic"       value="/$(arg ns)/camera/rgb/camera_info" />
+    <arg name="depth_camera_info_topic" value="/$(arg ns)/camera/depth/camera_info"/>
+    <arg name="frame_id"                value="/$(arg ns)/base_link" />
+    <arg name="approx_sync"             value="false" />
+    <arg name="visual_odometry"         value="false" />
+    <arg name="map_frame_id"            value="/$(arg ns)/map"/> 
+    <arg name="odom_topic"              value="/$(arg ns)/odom" />
+  </include>
+</launch>

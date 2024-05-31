@@ -1,0 +1,5 @@
+mapmin: [-2, -2]
+mapmax: [1, 1]
+mapres: [1, 1]
+mappath: map_2d.cfg
+storage: colmajor

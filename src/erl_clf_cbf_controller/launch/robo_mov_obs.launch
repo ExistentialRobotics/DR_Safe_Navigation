@@ -1,0 +1,159 @@
+<launch>
+    <!-- Frame Params -->
+    <arg name="base_frame" default="base_link"/>
+    <arg name="odom_frame" default="base_link"/>
+    <arg name="map_frame" default="map"/>
+
+    <!-- Control Params -->
+    <arg name="ctrl_odom_topic" default="/scanmatch_odom"/>
+    <arg name="enable_controller" default="true"/>
+    <arg name="enable_record" default="true"/>
+
+    <!-- Lidar Params -->
+    <arg name="pointcld_topic" default="ouster/points"/>
+    <arg name="scan_topic" default="front/scan"/>
+
+    <!-- Hector Params -->
+    <arg name="map_size" default="255"/>
+    <arg name="map_start_x" default="0.5"/>
+    <arg name="map_start_y" default="0.5"/>
+
+    <!-- arguments for moving obstacle setup -->
+    <arg name="mov_obs" default="true"/>
+    <arg name="virtual_movobs" default="false"/>
+    <arg name="mo1_info_topic" default="/vicon/movobs_1/odom"/>
+    <arg name="mo2_info_topic" default="/vicon/movobs_2/odom"/>
+
+    <!-- Pointcloud to laser scan -->
+    <node pkg="pointcloud_to_laserscan" type="pointcloud_to_laserscan_node" name="pcl2scan" output="screen">
+        <remap from="cloud_in" to="$(arg pointcld_topic)" />
+        <remap from="scan" to="$(arg scan_topic)" />
+        <rosparam>
+                target_frame: os_sensor # Leave disabled to output scan in pointcloud frame
+                transform_tolerance: 0.01
+                min_height: -0.10
+                max_height: 0.10
+
+                angle_min: -3.141 # -M_PI
+                angle_max: 3.141  # M_PI
+                angle_increment: 0.0061359 # M_PI/512
+                scan_time: 0.05
+                range_min: 0.29
+                range_max: 90.01
+                use_inf: true
+                inf_epsilon: 1.0
+        </rosparam>
+    </node>
+
+    <!--- moving obstacle info node -->
+    <include file="$(find erl_moving_obstacle)/launch/mov_obs_info_vicon.launch">
+        <arg name="virtual" value="$(arg virtual_movobs)" />
+        <!-- define moving obstacle set radius -->
+        <arg name="mo1_radius" value="0.3" />
+        <arg name="mo2_radius" value="0.3" />
+        <!-- if using virtual moving obstacle -->
+        <!-- define virtual moving obstacle start & goal position -->
+        <arg name="mo1_pstart_x" value="1.0" />
+        <arg name="mo1_pstart_y" value="2.0" />
+        <arg name="mo1_pgoal_x" value="3.0" />
+        <arg name="mo1_pgoal_y" value="6.0" />
+        <arg name="mo2_pstart_x" value="1.0" />
+        <arg name="mo2_pstart_y" value="-1.0" />
+        <arg name="mo2_pgoal_x" value="1.0" />
+        <arg name="mo2_pgoal_y" value="-3.0" />
+        <!-- define virtual moving obstacle velocity -->
+        <arg name="mo1_v" value="0.5" />
+        <arg name="mo2_v" value="0.3" />
+        <!-- if using Vicon captured moving obstacle odom -->
+        <arg name="mo1_subject_name" default="movobs_1"/>
+        <arg name="mo2_subject_name" default="movobs_2"/>
+    </include>
+
+    <node name="erl_astar_ros" pkg="erl_astar_ros" type="erl_astar_2d_online_node" output="log" launch-prefix="">
+        <param name="inflation_value" value="0.25"/>
+        <param name="planning_frame" value="$(arg map_frame)" />
+        <param name="plan_freq" value="40.0"/>
+        <param name="odom_topic" value="$(arg ctrl_odom_topic)"/>
+        <param name="path_topic" value="/path"/>
+        <param name="map_topic" value="/map"/>
+        <param name="goal_topic" value="/move_base_simple/goal"/>
+    </node>
+
+    <node pkg="hector_mapping" type="hector_mapping" name="hector_mapping" output="screen">
+        <!-- Frame names -->
+        <param name="map_frame" value="$(arg map_frame)" />
+        <param name="base_frame" value="$(arg base_frame)" />
+        <param name="odom_frame" value="$(arg odom_frame)" />
+
+        <!-- Tf use -->
+        <param name="use_tf_scan_transformation" value="false"/>
+        <param name="use_tf_pose_start_estimate" value="false"/>
+        <param name="pub_map_odom_transform" value="true"/>
+
+        <!-- we can use this odom as localization -->
+        <param name="pub_odometry" value="true"/>
+
+        <!-- Map size / start point -->
+        <param name="map_resolution" value="0.1"/>
+        <param name="map_size" value="$(arg map_size)"/>
+        <param name="map_size_x" value="$(arg map_size)"/>
+        <param name="map_size_y" value="$(arg map_size)"/>
+        <!-- put map origin to grid center full range is [0, 1] X [0, 1] -->
+        <param name="map_start_x" value="$(arg map_start_x)"/>
+        <param name="map_start_y" value="$(arg map_start_y)" />
+        <param name="map_multi_res_levels" value="4" />
+
+        <!-- Map update parameters -->
+        <param name="update_factor_free" value="0.4"/>
+        <param name="update_factor_occupied" value="0.9" />
+        <param name="map_update_distance_thresh" value="0.2"/>
+        <param name="map_update_angle_thresh" value="0.9" />
+        <param name="laser_z_min_value" value = "-1.0" />
+        <param name="laser_z_max_value" value = "1.0" />
+        <param name="laser_max_dist" value = "90.0" />
+        <param name="laser_min_dist" value = "0.29" />
+        <param name="map_pub_period" value = "0.025" />
+
+        <!-- Advertising config -->
+        <param name="advertise_map_service" value="true"/>
+        <param name="scan_subscriber_queue_size" value="5"/>
+        <param name="scan_topic" value="$(arg scan_topic)"/>
+    </node>
+
+    <node pkg="ref_gvn_lite" type="ref_gvn_lite_node.py" name="ref_gvn_lite" output="screen">
+        <param name="display_nav_path" value="true"/>
+        <param name="odom_topic" value="$(arg ctrl_odom_topic)"/>
+        <param name="path_topic" value="/path"/>
+        <param name="radius_topic" value="/sdf_val"/>
+        <param name="gvn_restart_topic" value="/gvn_restart"/>
+        <param name="ctrl_freq" value="50.0"/>
+        <param name="kg" value="2.0"/>
+    </node>
+
+    <group if="$(arg enable_controller)" >
+    <!--- Run cone controller as low level velocity controller -->
+    <node pkg="erl_clf_cbf_controller" type="clf_cbf_controller_node.py" name="clf_cbf_controller"  output="screen">
+        <param name="odom_topic" value="$(arg ctrl_odom_topic)"/>
+        <param name="path_topic" value="/path"/>
+        <param name="goal_topic" value="/ref_gvn_lite/local_goal"/>
+        <param name="ctrl_freq" value="100.0"/>
+        <!-- Control limits are set as the same as in control.yaml in jackal_control package -->
+        <!-- linear velocity limit m/sec-->
+        <param name="mov_obs" value="$(arg mov_obs)"/>
+
+        <param name="v_min" value="-2.0"/>
+        <param name="v_max" value="2.0"/>
+        <!-- angular velocity limit rad/sec-->
+        <param name="w_min" value="-2.0"/>
+        <param name="w_max" value="2.0"/>
+    </node>
+    </group >
+
+    <node name="emergency_stop" pkg="stop_now" type="stop_now_node.py" output="screen">
+        <rosparam command="load" file="$(find stop_now)/config/default.yaml" />
+    </node>
+
+    <group if="$(arg enable_record)" >
+        <node pkg="rosbag" type="record" name="rosbag_record" output="screen" args="record -x '(.*)ouster(.*)' -a -o /media/usb0/ros_data/vicon_clf_cbf_jan_4"/>
+    </group >
+</launch>

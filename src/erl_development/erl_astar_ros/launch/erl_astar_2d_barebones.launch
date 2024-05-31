@@ -1,0 +1,15 @@
+<launch>
+  <!--- Run erl astar -->
+  <node name="erl_astar_ros" pkg="erl_astar_ros" type="erl_astar_2d_online_node" output="screen" launch-prefix="">
+    <!-- Goal Configuration -->
+    <param name="inflation_value" value="0.25"/>
+    <!-- Global Parameters -->
+    <param name="plan_freq" value="40.0"/>
+    <param name="odom_topic" value="/odometry/filtered"/>
+    <param name="path_topic" value="/path"/>
+    <param name="map_topic" value="/map"/>  
+    <param name="goal_topic" value="/move_base_simple/goal"/>
+  </node>
+
+</launch>
+

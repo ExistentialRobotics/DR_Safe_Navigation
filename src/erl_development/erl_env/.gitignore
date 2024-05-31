@@ -1,0 +1,14 @@
+# Build files
+build
+debug
+release
+lib
+docs
+bin
+# Temporary files
+test.yaml
+*.pyc
+# IDE
+.idea
+docs
+cmake-build-debug

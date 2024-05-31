@@ -1,0 +1,30 @@
+<launch>
+
+  <arg name="inflation_value" default="0.3" />
+  <arg name="plan_freq" default="50.0" />
+  <arg name="planning_frame" default="map" />
+
+  <!-- need 3 subscribers  -->
+  <!-- robot position from odom, planning start in 2d-->
+  <arg name="odom_topic" default="/odom" />
+  <!-- map to planning with -->
+  <arg name="map_topic" default="/map" />
+  <!-- planning goal in 2d -->
+  <arg name="goal_topic" default="/move_base_simple/goal" />
+  
+  <!-- publish path at this path_topic -->
+  <arg name="path_topic" default="/path" />
+ 
+  <!--- Run erl astar -->
+  <node name="erl_astar_ros" pkg="erl_astar_ros" type="erl_astar_2d_online_node" output="screen" launch-prefix="">
+    <param name="inflation_value" value="$(arg inflation_value)"/>
+    <param name="plan_freq" value="$(arg plan_freq)"/>
+    <param name="planning_frame" value="$(arg planning_frame)"/>
+    <param name="odom_topic" value="$(arg odom_topic)"/>
+    <param name="path_topic" value="$(arg path_topic)"/>
+    <param name="map_topic" value="$(arg map_topic)"/>  
+    <param name="goal_topic" value="$(arg goal_topic)"/>
+  </node>
+
+</launch>
+

@@ -1,0 +1,8 @@
+mapmin: [-26.125, -24.675, -0.025]
+mapmax: [26.125, 24.675, 0.025]
+mapres: [0.05, 0.05, 0.05]
+mapdim: [1045, 987, 1]    #(x = horizontal, y = vertical)
+origin: [0.0, 0.0, 0.0]
+datatype: i
+storage: colmajor
+mappath: large_map_icol_1045x987.cfg

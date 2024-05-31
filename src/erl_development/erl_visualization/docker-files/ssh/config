@@ -1,0 +1,7 @@
+Host github.com
+	StrictHostKeyChecking no
+	IdentityFile ~/.ssh/erl-docker-ssh-id_rsa
+
+Host bitbucket.org
+	StrictHostKeyChecking no
+	IdentityFile ~/.ssh/erl-docker-ssh-id_rsa

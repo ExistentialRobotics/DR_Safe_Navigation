@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
+<launch>
+    <arg name="world" default="simple"/>
+
+    <!-- Spawn the World -->
+    <include file="$(find erl_models)/launch/spawn_world.launch">
+        <arg name="world" value="$(arg world)"/>
+        <arg name="scale" value="1"/>
+        <arg name="gui" value="false"/>
+    </include>
+
+
+    <!-- Spawn the Quadrotors -->
+    <include file="$(find erl_models)/launch/quadrotor/spawn_quadrotor.launch">
+        <arg name="ns" value="quad0"/>
+        <arg name="x" value="0.55"/>
+        <arg name="y" value="14.35"/>
+        <arg name="z" value="0.1"/>
+    </include>
+
+
+    <!-- Configure the Trajectory Publisher -->
+    <node name="target_tracking" pkg="erl_models" type="playback_quadrotor_matfile.py" output="screen">
+        <param name="num_robots" value="1"/>
+        <param name="num_targets" value="1"/>
+        <param name="publish_paths" value="1"/>
+
+        <param name="data" value="$(find erl_models)/data/results_2_6_v6.mat"/>
+        <!-- Setup Robot Topics -->
+        <remap from="robot_sub_0" to="/quad0/ground_truth/global_odom"/>
+        <remap from="quadrotor_pub_0" to="/quad0/traj"/>
+    </node>
+
+
+    <!-- Launch rviz -->
+    <node pkg="rviz" type="rviz" name="rviz"
+          args="-d $(find erl_models)/rviz/quadrotor.rviz"/>
+</launch>
+

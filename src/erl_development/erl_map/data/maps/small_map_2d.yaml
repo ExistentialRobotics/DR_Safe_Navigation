@@ -1,0 +1,13 @@
+mapmin: [0, 0]
+mapmax: [4.5, 4.5]
+mapres: [0.3, 0.3]
+mapdim: [15, 15]
+origin: [2.25, 2.25]
+origincells: [7, 7]
+datatype: a
+storage: colmajor
+mappath: small_map_2d.cfg
+# A* Parameters
+start: [0.3, 0.3]
+goal: [4.2, 4.2]
+epsilon: 1

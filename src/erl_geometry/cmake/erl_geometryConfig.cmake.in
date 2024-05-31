@@ -1,0 +1,52 @@
+@PACKAGE_INIT@
+
+# resolve dependencies
+foreach(package erl_common)
+    if (NOT TARGET ${package})
+        message(STATUS "Looking for ${package}")
+        find_package(${package} REQUIRED)
+    endif()
+endforeach()
+
+erl_find_package(
+        PACKAGE Qhull
+        REQUIRED
+        COMMANDS UBUNTU_LINUX "try `sudo apt-get install libqhull-dev`"
+        COMMANDS ARCH_LINUX "try `sudo pacman -S qhull`")
+get_target_property(Qhull_INCLUDE_DIRS Qhull::qhullcpp INTERFACE_INCLUDE_DIRECTORIES)
+get_target_property(qhull_r_location Qhull::qhull_r LOCATION)
+get_target_property(qhullcpp_location Qhull::qhullcpp LOCATION)
+list(APPEND Qhull_LIBRARIES ${qhull_r_location} ${qhullcpp_location})
+
+erl_find_package(
+        PACKAGE Open3D
+        REQUIRED
+        COMMANDS GENERAL "visit http://www.open3d.org/"
+        COMMANDS ARCH_LINUX "try `paru -S open3d`"
+)
+get_target_property(Open3D_LIBRARIES Open3D::Open3D LOCATION)
+
+if (ERL_BUILD_TEST_${PROJECT_NAME})
+    erl_find_package(
+            PACKAGE octomap
+            REQUIRED
+            COMMANDS UBUNTU_LINUX "try `sudo apt-get install liboctomap-dev`"
+            COMMANDS ARCH_LINUX "try `paru -S octomap`"
+    )
+    get_target_property(octomap_INCLUDE_DIRS octomap INTERFACE_INCLUDE_DIRECTORIES)
+    get_target_property(octomap_LIBRARIES octomap LOCATION)
+endif ()
+
+erl_project_setup(
+    @PROJECT_NAME@
+    ERL_PACKAGES erl_common
+)
+include("${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME@Targets.cmake")
+
+# name alias
+add_library(@PROJECT_NAME@::@PROJECT_NAME@ ALIAS @PROJECT_NAME@)
+
+check_required_components("@PROJECT_NAME@")
+
+# export variables
+erl_mark_project_found(@PROJECT_NAME@)

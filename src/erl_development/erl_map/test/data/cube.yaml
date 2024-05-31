@@ -1,0 +1,9 @@
+mapmin: [-1.05, -1.05, -0.0429]
+mapmax: [1.05, 1.05, 1.4571]
+mapres: [0.1, 0.1, 0.1]
+mapdim: [21, 21, 15]
+origin: [0, 0, 0.7071]
+origincells: [10, 10, 7]
+datatype: a
+storage: colmajor
+mappath: cube.cfg

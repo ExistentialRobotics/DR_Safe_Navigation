@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
+<launch>
+  <arg name="ns" default="scarab40" />
+  <arg name="tf_prefix" default="scarab40"/>
+
+  <arg name="base_frame" default="base_footprint"/>
+  <arg name="laser_frame" default="laser"/>
+  <arg name="odom_laser_frame" default="odom"/>
+    
+  <arg name="scan_topic" default="scan" />
+  <arg name="odom_motor_topic" default="odom" />
+  <arg name="odom_laser_topic" default="odom_laser" />
+
+  <group ns="$(arg ns)">
+
+    <!-- Truncate Laser Scan 
+    <node pkg="laser_odom" type="truncate_scan" name="truncate_scan" output="screen">
+      <remap from="~scan_in" to="scan"/>
+      <remap from="~scan_out" to="scan_trunc"/>
+    </node>
+    -->
+    
+    <!-- Throttle Laser Scan 
+    <node name="laser_throttle" pkg="topic_tools" type="throttle"
+          args="messages $(arg scan_topic) 5.0 $(arg scan_topic)_throttle" />
+     -->
+
+    <!-- publishes tf from odom_laser_frame to base_frame --> 
+    <!--  launch-prefix="gdb -ex run -args" -->
+    <node name="laser_odom" pkg="laser_odom" type="laser_odom" output="screen">
+      <param name="debug" value="false" />
+      <param name="base_frame" value="$(arg tf_prefix)/$(arg base_frame)" />
+      <param name="laser_base_frame" value="$(arg tf_prefix)/$(arg base_frame)" />
+      <param name="laser_frame" value="$(arg tf_prefix)/$(arg laser_frame)" />
+      <param name="odom_frame" value="$(arg tf_prefix)/$(arg odom_laser_frame)" />
+      
+      <!-- take in scan and motor odometry -->
+      <remap from="scan" to="$(arg scan_topic)"/>
+      <remap from="odom_motor" to="$(arg odom_motor_topic)"/>
+      <remap from="laser_cloud" to="laser_cloud"/>
+      
+      <!-- publish estimated odometry -->
+      <remap from="odom_laser" to="$(arg odom_laser_topic)"/>
+      <rosparam>
+        grid_resolution: 0.05
+        sensor_sd: 0.02
+        subsample: 1
+        travel_distance: 0.2
+        travel_angle: 0.034
+        decay_duration: 200
+        decay_step: 40
+        range_x: 0.2
+        range_y: 0.2
+        range_t: 0.14
+        inc_t: 0.0035
+      </rosparam>
+    </node>
+
+  </group> 
+</launch>
+
+
+

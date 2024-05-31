@@ -1,0 +1,5 @@
+mapmin: [-2, -2, 0]
+mapmax: [1, 1, 3]
+mapres: [1, 1, 1]
+mappath: map_3d.cfg
+storage: rowmajor

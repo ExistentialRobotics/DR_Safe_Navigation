@@ -1,0 +1,10 @@
+#IDE
+.idea
+cmake-build-debug
+build
+lib
+debug
+bin
+
+*pyc*
+*pycache*

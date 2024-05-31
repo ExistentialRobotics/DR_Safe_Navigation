@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="model_name" default="pretzel" />
+  <arg name="model_scale" default="1.0" />
+  
+  <node pkg="erl_visualization" type="grid_msg_publisher" name="grid_msg_publisher" output="screen">
+    <param name="world_frame" value="map"/>
+    <param name="grid_resource" value="$(find erl_models)/models/$(arg model_name)/$(arg model_name).yaml"/>
+  </node>
+
+  <node pkg="erl_visualization" type="grid_msg_visualization" name="grid_visualization" output="screen">
+    <param name="world_frame" value="map"/>
+    <remap from="~grid_msg" to="grid_msg_publisher/grid_msg" />
+  </node>
+
+  <node pkg="erl_visualization" type="mesh_visualization" name="mesh_visualization" output="screen">    
+    <param name="world_frame" value="map"/>
+    <param name="mesh_resource" value="package://erl_models/models/$(arg model_name)/$(arg model_name).dae"/>
+    <param name="scale" type="double" value="$(arg model_scale)"/>
+    <param name="is_static" type="bool" value="true"/>
+  </node>
+
+  <node pkg="rviz"
+    type="rviz"
+    name="rviz"
+    output="screen"
+    args="-d $(find erl_visualization)/rviz/test_grid_visualization.rviz"/>
+
+</launch>
+
+

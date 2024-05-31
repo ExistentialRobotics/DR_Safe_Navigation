@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
+<launch>
+  
+	<!-- Spawn the World -->
+  <include file="$(find erl_models)/launch/spawn_world.launch">
+    <arg name="world" value="fla_warehouse1"/>
+    <arg name="scale" value="1"/>
+    <arg name="gui" value="true"/>
+  </include>
+
+  <!-- Spawn the Quadrotor -->
+  <include file="$(find erl_models)/launch/spawn_robot.launch">
+    <arg name="ns" value="quad01"/>
+    <arg name="tf_prefix" value="quad01" />    
+    <arg name="model" value="$(find erl_models)/urdf/hummingbird_rgbd/hummingbird_rgbd.gazebo.xacro"/>
+    <arg name="px" value="0.0" />
+    <arg name="py" value="0.0" />
+    <arg name="use_groundtruth_odom" value="true" />
+  </include>
+   
+  <!-- Quadrotor Controller -->
+  <group ns="quad01">
+    <node pkg="nodelet"
+      type="nodelet"
+      args="standalone so3_control/SO3ControlNodelet"
+      name="so3_control"
+      required="true"
+      output="screen">
+      <rosparam file="$(find so3_control)/config/hummingbird_gains2.yaml"/>
+      <param name="mass" value="0.5"/>
+      <remap from="~odom" to="ground_truth/odom"/>
+      <remap from="~position_cmd" to="position_cmd"/>
+      <remap from="~so3_cmd" to="so3_cmd"/>
+      <remap from="~motors" to="motors"/>
+    </node>
+  </group>
+
+  <!-- Turn Motors On -->
+  <!-- rostopic pub -1 /quad01/motors std_msgs/Bool "{data: true}" -->
+  <!-- <node pkg="rostopic" type="rostopic" name="motors_on" args="pub -1 /quad01/motors std_msgs/Bool '{data: true}'" output="screen"/> -->
+ 
+  <!-- Spawn the Scarab -->
+  <include file="$(find erl_models)/launch/spawn_robot.launch">
+    <arg name="ns" value="scarab01"/>
+    <arg name="tf_prefix" value="scarab01" />
+    <arg name="model" value="$(find erl_models)/urdf/scarab/scarab.xacro"/>
+    <arg name="px" value="5.0" />
+    <arg name="py" value="0.0" />
+  </include>
+
+
+
+      
+  <!-- Launch rviz -->
+  <node pkg="rviz" type="rviz" name="rviz"
+        args="-d $(find erl_models)/rviz/ground_air.cfg.rviz"/>
+
+</launch>
