@@ -336,9 +336,7 @@ namespace erl::sdf_mapping {
 
             // sort surface data by distance
             std::sort(surface_data_vec.begin(), surface_data_vec.end(), [](const auto &a, const auto &b) { return a.first < b.first; });
-            if (surface_data_vec.size() > static_cast<std::size_t>(m_setting_->gp_sdf->max_num_samples)) {
-                surface_data_vec.resize(m_setting_->gp_sdf->max_num_samples);
-            }
+            if (surface_data_vec.size() > static_cast<std::size_t>(m_setting_->gp_sdf->max_num_samples)) { surface_data_vec.resize(m_setting_->gp_sdf->max_num_samples); }
 
             // prepare data for GP training
             gp->gp->Reset(static_cast<long>(surface_data_vec.size()), 2);

@@ -7,9 +7,9 @@
 #pragma GCC diagnostic ignored "-Wunused-variable"
 #include "logging.hpp"
 
-#include <fstream>
+#include <Eigen/Core>
 
-#include <unsupported/Eigen/CXX11/Tensor>
+#include <fstream>
 
 // https://stackoverflow.com/questions/4433950/overriding-functions-from-dynamic-libraries
 // https://danieldk.eu/Posts/2020-08-31-MKL-Zen.html
@@ -23,8 +23,8 @@ namespace Eigen {
     using MatrixXl = MatrixX<long>;
     using MatrixXb = MatrixX<bool>;
     using MatrixX8U = MatrixX<uint8_t>;
-    using Matrix2Xl = Matrix<long, 2, Eigen::Dynamic>;
-    using Matrix3Xl = Matrix<long, 3, Eigen::Dynamic>;
+    using Matrix2Xl = Matrix<long, 2, Dynamic>;
+    using Matrix3Xl = Matrix<long, 3, Dynamic>;
     using Matrix23d = Matrix<double, 2, 3>;
     using Matrix24d = Matrix<double, 2, 4>;
 
@@ -32,7 +32,7 @@ namespace Eigen {
     using RMatrix = Matrix<T, rows, cols, RowMajor>;
 
     using RMatrix23d = RMatrix<double, 2, 3>;
-    using RMatrix2Xd = RMatrix<double, 2, Eigen::Dynamic>;
+    using RMatrix2Xd = RMatrix<double, 2, Dynamic>;
 
     template<typename T>
     using Scalar = Matrix<T, 1, 1>;
@@ -46,7 +46,6 @@ namespace Eigen {
 }  // namespace Eigen
 
 namespace erl::common {
-
     // https://eigen.tuxfamily.org/dox/structEigen_1_1IOFormat.html
     enum class EigenTextFormat {
         kDefaultFmt = 0,
@@ -63,10 +62,9 @@ namespace erl::common {
     template<typename T>
     void
     SaveEigenMatrixToTextFile(
-        const std::string &file_path,
-        const Eigen::Ref<const Eigen::MatrixX<T>> &matrix,
+        const std::string& file_path,
+        const Eigen::Ref<const Eigen::MatrixX<T>>& matrix,
         const EigenTextFormat format = EigenTextFormat::kDefaultFmt) {
-
         std::ofstream ofs(file_path);
         if (!ofs.is_open()) { throw std::runtime_error("Could not open file " + file_path); }
         ofs << matrix.format(GetEigenTextFormat(format));
@@ -75,7 +73,7 @@ namespace erl::common {
 
     template<typename T, int Rows = Eigen::Dynamic, int Cols = Eigen::Dynamic, int RowMajor = Eigen::ColMajor>
     Eigen::Matrix<T, Rows, Cols, RowMajor>
-    LoadEigenMatrixFromTextFile(const std::string &file_path, const EigenTextFormat format = EigenTextFormat::kDefaultFmt) {
+    LoadEigenMatrixFromTextFile(const std::string& file_path, const EigenTextFormat format = EigenTextFormat::kDefaultFmt) {
         std::vector<T> data;
         std::ifstream ifs(file_path);
 
@@ -140,19 +138,19 @@ namespace erl::common {
 
     template<typename T>
     void
-    SaveEigenMatrixToBinaryFile(const std::string &file_path, const Eigen::Ref<const Eigen::MatrixX<T>> &matrix) {
+    SaveEigenMatrixToBinaryFile(const std::string& file_path, const Eigen::Ref<const Eigen::MatrixX<T>>& matrix) {
         const Eigen::MatrixX<T> matrix_copy = matrix;  // make a copy to make sure that the memory is contiguous
         std::ofstream ofs(file_path, std::ios::binary);
         if (!ofs.is_open()) { throw std::runtime_error("Could not open file " + file_path); }
         const long matrix_shape[2] = {matrix_copy.rows(), matrix_copy.cols()};
-        ofs.write(reinterpret_cast<const char *>(matrix_shape), 2 * sizeof(long));
-        ofs.write(reinterpret_cast<const char *>(matrix_copy.data()), matrix_copy.size() * sizeof(T));
+        ofs.write(reinterpret_cast<const char*>(matrix_shape), 2 * sizeof(long));
+        ofs.write(reinterpret_cast<const char*>(matrix_copy.data()), matrix_copy.size() * sizeof(T));
         ofs.close();
     }
 
     template<typename T, int Rows, int Cols>
     Eigen::Matrix<T, Rows, Cols>
-    LoadEigenMatrixFromBinaryFile(const std::string &file_path) {
+    LoadEigenMatrixFromBinaryFile(const std::string& file_path) {
         std::ifstream ifs(file_path, std::ios::binary);
         if (!ifs.is_open()) { throw std::runtime_error("Could not open file " + file_path); }
 
@@ -165,7 +163,7 @@ namespace erl::common {
             file_size,
             sizeof(T));
         long matrix_shape[2];
-        ifs.read(reinterpret_cast<char *>(matrix_shape), 2 * sizeof(long));
+        ifs.read(reinterpret_cast<char*>(matrix_shape), 2 * sizeof(long));
 
         ERL_ASSERTM(
             Rows == Eigen::Dynamic || matrix_shape[0] == Rows,
@@ -186,14 +184,14 @@ namespace erl::common {
             num_elements);
 
         Eigen::MatrixX<T> matrix(matrix_shape[0], matrix_shape[1]);
-        ifs.read(reinterpret_cast<char *>(matrix.data()), static_cast<long>(num_elements * sizeof(T)));
+        ifs.read(reinterpret_cast<char*>(matrix.data()), static_cast<long>(num_elements * sizeof(T)));
         ifs.close();
         return matrix;
     }
 
     template<EigenTextFormat Format, typename Matrix>
     std::string
-    EigenToString(const Matrix &matrix) {
+    EigenToString(const Matrix& matrix) {
         std::stringstream ss;
         ss << matrix.format(GetEigenTextFormat(Format));
         return ss.str();
@@ -201,7 +199,7 @@ namespace erl::common {
 
     template<typename Matrix>
     std::string
-    EigenToDefaultFmtString(const Matrix &matrix) {
+    EigenToDefaultFmtString(const Matrix& matrix) {
         std::stringstream ss;
         ss << matrix.format(GetEigenTextFormat(EigenTextFormat::kDefaultFmt));
         return ss.str();
@@ -209,7 +207,7 @@ namespace erl::common {
 
     template<typename Matrix>
     std::string
-    EigenToCommaInitFmtString(const Matrix &matrix) {
+    EigenToCommaInitFmtString(const Matrix& matrix) {
         std::stringstream ss;
         ss << matrix.format(GetEigenTextFormat(EigenTextFormat::kCommaInitFmt));
         return ss.str();
@@ -217,7 +215,7 @@ namespace erl::common {
 
     template<typename Matrix>
     std::string
-    EigenToCleanFmtString(const Matrix &matrix) {
+    EigenToCleanFmtString(const Matrix& matrix) {
         std::stringstream ss;
         ss << matrix.format(GetEigenTextFormat(EigenTextFormat::kCleanFmt));
         return ss.str();
@@ -225,7 +223,7 @@ namespace erl::common {
 
     template<typename Matrix>
     std::string
-    EigenToOctaveFmtString(const Matrix &matrix) {
+    EigenToOctaveFmtString(const Matrix& matrix) {
         std::stringstream ss;
         ss << matrix.format(GetEigenTextFormat(EigenTextFormat::kOctaveFmt));
         return ss.str();
@@ -233,7 +231,7 @@ namespace erl::common {
 
     template<typename Matrix>
     std::string
-    EigenToNumPyFmtString(const Matrix &matrix) {
+    EigenToNumPyFmtString(const Matrix& matrix) {
         std::stringstream ss;
         ss << matrix.format(GetEigenTextFormat(EigenTextFormat::kNumpyFmt));
         return ss.str();
@@ -241,12 +239,11 @@ namespace erl::common {
 
     template<typename Matrix>
     std::string
-    EigenToCsvFmtString(const Matrix &matrix) {
+    EigenToCsvFmtString(const Matrix& matrix) {
         std::stringstream ss;
         ss << matrix.format(GetEigenTextFormat(EigenTextFormat::kCsvFmt));
         return ss.str();
     }
-
 }  // namespace erl::common
 
 #pragma GCC diagnostic pop

@@ -103,20 +103,20 @@ macro(erl_add_tests)
                     endif ()
                 endif ()
                 target_link_libraries(${name} ${${PROJECT_NAME}_TEST_LIBRARIES} GTest::Main ${${name}_${name}_LIBRARIES})
-                #                if (DEFINED ${name}_GTEST_ARGS)
-                #                    gtest_discover_tests(
-                #                            ${name}
-                #                            EXTRA_ARGS ${${name}_GTEST_ARGS}
-                #                            WORKING_DIRECTORY ${${PROJECT_NAME}_TEST_DIR}
-                #                            DISCOVERY_TIMEOUT 60
-                #                    )
-                #                else ()
-                #                    gtest_discover_tests(
-                #                            ${name}
-                #                            WORKING_DIRECTORY ${${PROJECT_NAME}_TEST_DIR}
-                #                            DISCOVERY_TIMEOUT 60
-                #                    )
-                #                endif ()
+                if (DEFINED ${name}_GTEST_ARGS)
+                    gtest_discover_tests(
+                            ${name}
+                            EXTRA_ARGS ${${name}_GTEST_ARGS}
+                            WORKING_DIRECTORY ${${PROJECT_NAME}_TEST_DIR}
+                            DISCOVERY_TIMEOUT 60
+                    )
+                else ()
+                    gtest_discover_tests(
+                            ${name}
+                            WORKING_DIRECTORY ${${PROJECT_NAME}_TEST_DIR}
+                            DISCOVERY_TIMEOUT 60
+                    )
+                endif ()
             endforeach ()
         endif ()
         # TODO: add python tests
@@ -847,7 +847,7 @@ macro(erl_setup_common_packages)
         unset(_CXX_FLAGS)
     endif ()
     if (ERL_USE_INTEL_MKL)  # option from erl_setup_lapack
-        set(EIGEN3_VERSION_STRING "3.4.90" CACHE STRING "Eigen3 version" FORCE)  # some other packages may read this variable.
+        # set(EIGEN3_VERSION_STRING "3.4.90" CACHE STRING "Eigen3 version" FORCE)  # some other packages may read this variable.
         erl_find_package(
                 PACKAGE Eigen3
                 ${EIGEN3_VERSION_STRING} REQUIRED CONFIG GLOBAL  # in case some other packages define FindEigen3.cmake
@@ -860,7 +860,10 @@ macro(erl_setup_common_packages)
                 COMMANDS APPLE "try `brew install eigen`"
                 COMMANDS UBUNTU_LINUX "try `sudo apt install libeigen3-dev`"
                 COMMANDS ARCH_LINUX "try `sudo pacman -S eigen`")
-        set(EIGEN3_VERSION_STRING ${Eigen3_VERSION} CACHE STRING "Eigen3 version" FORCE)
+    endif ()
+    set(EIGEN3_VERSION_STRING ${Eigen3_VERSION} CACHE STRING "Eigen3 version" FORCE)
+    if (EIGEN3_VERSION_STRING VERSION_LESS "3.4.0")
+        message(FATAL_ERROR "Eigen3 version must be at least 3.4.0")
     endif ()
     set_target_properties(Eigen3::Eigen PROPERTIES SYSTEM ON)
 
@@ -901,10 +904,6 @@ macro(erl_setup_common_packages)
             endif ()
             message(STATUS "yaml-cpp_INCLUDE_DIRS: ${yaml-cpp_INCLUDE_DIRS}")
             message(STATUS "yaml-cpp_LIBRARIES: ${yaml-cpp_LIBRARIES}")
-            # get_target_property(Matplot++_INCLUDE_DIRS Matplot++::matplot INTERFACE_INCLUDE_DIRECTORIES)
-            # get_target_property(Matplot++_LIBRARIES Matplot++::matplot LOCATION)
-            # message(STATUS "Matplot++_INCLUDE_DIRS: ${Matplot++_INCLUDE_DIRS}")
-            # message(STATUS "Matplot++_LIBRARIES: ${Matplot++_LIBRARIES}")
         endif ()
     endif ()
 endmacro()

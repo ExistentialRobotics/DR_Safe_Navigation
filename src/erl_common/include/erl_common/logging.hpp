@@ -7,7 +7,6 @@
 
 namespace erl::common {
     struct Logging {
-
         static std::string
         GetDateStr() {
             return fmt::format("{:%Y-%m-%d}", fmt::localtime(std::time(nullptr)));

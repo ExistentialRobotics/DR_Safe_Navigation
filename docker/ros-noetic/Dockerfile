@@ -1,5 +1,5 @@
 ARG CUDA_VERSION="12.3.2-cudnn9-devel-ubuntu20.04"
-ARG BASE_IMAGE=erl/ubuntu-desktop:${CUDA_VERSION}
+ARG BASE_IMAGE=erl/ubuntu-desktop-dev:${CUDA_VERSION}
 FROM ${BASE_IMAGE}
 
 RUN sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'

@@ -1,9 +1,9 @@
 #pragma once
 
 #include "abstract_quadtree.hpp"
-#include "quadtree_key.hpp"
-#include "occupancy_quadtree_node.hpp"
 #include "occupancy_nd_tree_setting.hpp"
+#include "occupancy_quadtree_node.hpp"
+#include "quadtree_key.hpp"
 
 namespace erl::geometry {
 

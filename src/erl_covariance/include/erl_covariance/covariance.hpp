@@ -125,7 +125,7 @@ namespace erl::covariance {
     };
 
 #define ERL_REGISTER_COVARIANCE(covariance_type)                      \
-    inline volatile bool kRegistered##covariance_type = []() {        \
+    inline const volatile bool kRegistered##covariance_type = []() {  \
         auto setting = std::make_shared<covariance_type::Setting>();  \
         auto covariance = std::make_shared<covariance_type>(setting); \
         Covariance::RegisterCovarianceType(covariance);               \

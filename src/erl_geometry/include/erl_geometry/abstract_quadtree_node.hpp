@@ -4,9 +4,9 @@
 #include "erl_common/string_utils.hpp"
 
 #include <cstdint>
-#include <string>
 #include <map>
 #include <memory>
+#include <string>
 
 namespace erl::geometry {
     /**
