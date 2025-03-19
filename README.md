@@ -1,7 +1,7 @@
 Distributively Robust Safe Robot Navigation
 ===========================================
 
-[[Website]](https://existentialrobotics.org/DR_Safe_Navigation_Webpage/)
+[[Website]](https://existentialrobotics.org/DRO_Safe_Navigation/)
 [[Paper]](https://arxiv.org/abs/2405.18251)
 
 This repository contains implementations for the work "Sensor-Based Distributively Robust Control for Safe Robot Navigation in Dynamic Environments".
@@ -24,6 +24,93 @@ git clone https://github.com/ExistentialRobotics/DR_Safe_Navigation.git
 ## Dependencies
 The code is tested on Ubuntu 20.04 LTS + ROS Noetic, in both simulation and real experiments. 
 
+
+## Using Docker
+
+We provide a Docker image to simplify the setup process. This is the recommended way to run the simulations if you have Docker installed. Otherwise, you can follow the instructions below to install the dependencies manually.
+
+To use the script, you need to install docker and nvidia-docker first.
+```bash
+cd docker
+chmod +x build.bash
+./build.bash
+```
+
+### Running with Docker
+
+1. First, allow X server connections from your local user:
+```bash
+xhost +local:$USER
+```
+
+2. Run the Docker container with the necessary parameters:
+```bash
+docker run -it --privileged \
+  --env="DISPLAY=$DISPLAY" \
+  --env="QT_X11_NO_MITSHM=1" \
+  --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
+  --volume="$HOME:$HOME:rw" \
+  --workdir="$HOME" \
+  --name="clf-cbf-jackal-container" \
+  erl/clf-cbf-jackal:latest
+```
+
+3. Once inside the container, navigate to your project directory (need to modify the following path):
+```bash
+cd /path/to/DR_Safe_Navigation
+```
+
+4. Source the ROS environment:
+```bash
+source /opt/ros/noetic/setup.bash
+```
+
+5. Build the project (only needed the first time):
+```bash
+catkin build erl_clf_cbf_controller
+source devel/setup.bash
+```
+
+
+# 👩‍💻 Code (Gazebo Simulation)
+
+## (Optional) Add noise to LiDAR
+To test the robustness of the controller, one can modify the noise model of the lms1xx 2D LiDAR in the Gazebo simulation. To do so, first run ```roscd lms1xx```, then ```cd  urdf/```, and modify the ```sick_lms1xx.urdf.xacro``` file, there is an 'Stddev' variable to modify. (If ```roscd lms1xx``` does not work, one could ```cd /opt/ros/noetic/share/lms1xx``` to the desired directory.) 
+
+## 🛠️ Launch
+
+1. To run the Gazebo simulation in the static environment, use the following command:
+```
+roslaunch erl_clf_cbf_controller clf_cbf_control.launch
+```
+
+2. To run the Gazebo simulation in the dynamic environment, use the following command:
+```
+roslaunch erl_clf_cbf_controller clf_cbf_mov_obs.launch
+```
+
+If the robot is not being spawned successfully, refer to this link:
+```
+https://www.clearpathrobotics.com/assets/guides/kinetic/jackal/simulation.html
+```
+
+# Baseline compare (nominal CLF-CBF QP and CLF GP-CBF SOCP)
+
+To compare the controller performance with the provided baselines in Gazebo, you could specify two options when launching the robot: controller_type and use_sdf. The default setting is controller_type:=drccp, use_sdf:=false.
+
+There are three more controller types: clf_qp_only (no collision avoidance), baseline_clf_cbf_qp, and gp_cbf_socp. To use the GP-SDF map, set use_sdf:=true. 
+
+For example, if you want to run the GP-SOCP controller with the GP-SDF map, use the following command:
+```
+roslaunch erl_clf_cbf_controller clf_cbf_control.launch controller_type:=gp_cbf_socp use_sdf:=true
+```
+
+**Note**: To use the GP-SDF map for controller synthesis. Please run
+```catkin build ```
+to build all the required packages (you will need to install additional packages as below).  
+
+
+## 📦 Manual Dependencies Installation
 
 If you computer dose not have ROS installed, please follow the ROS installation guidelines:
 ```
@@ -65,50 +152,6 @@ sudo apt install 'ros-noetic-rqt*'
 
 For the Gazebo dynamic environment simulation, additionally, you would need to install the <a href="https://github.com/robotics-upo/lightsfm?tab=readme-ov-file#lightsfm">lightsfm</a>.
 
-
-## Compilation
-
-```catkin build erl_clf_cbf_controller```
-and then
-```source devel/setup.bash```
-to source the environment.
-
-# 👩‍💻 Code (Gazebo Simulation)
-
-## (Optional) Add noise to LiDAR
-To test the robustness of the controller, one can modify the noise model of the lms1xx 2D LiDAR in the Gazebo simulation. To do so, first run ```roscd lms1xx```, then ```cd  urdf/```, and modify the ```sick_lms1xx.urdf.xacro``` file, there is an 'Stddev' variable to modify. (If ```roscd lms1xx``` does not work, one could ```cd /opt/ros/noetic/share/lms1xx``` to the desired directory.) 
-
-## 🛠️ Launch
-
-1. To run the Gazebo simulation in the static environment, use the following command:
-```
-roslaunch erl_clf_cbf_controller clf_cbf_control.launch
-```
-
-2. To run the Gazebo simulation in the dynamic environment, use the following command:
-```
-roslaunch erl_clf_cbf_controller clf_cbf_mov_obs.launch
-```
-
-If the robot is not being spawned successfully, refer to this link:
-```
-https://www.clearpathrobotics.com/assets/guides/kinetic/jackal/simulation.html
-```
-
-# Baseline compare (nominal CLF-CBF QP and CLF GP-CBF SOCP)
-
-To compare the controller performance with the provided baselines in Gazebo, you could specify two options when launching the robot: controller_type and use_sdf. The default setting is controller_type:=drccp, use_sdf:=false.
-
-There are three more controller types: clf_qp_only (no collision avoidance), baseline_clf_cbf_qp, and gp_cbf_socp. To use the GP-SDF map, set use_sdf:=true. 
-
-For example, if you want to run the GP-SOCP controller with the GP-SDF map, use the following command:
-```
-roslaunch erl_clf_cbf_controller clf_cbf_control.launch controller_type:=gp_cbf_socp use_sdf:=true
-```
-
-**Note**: To use the GP-SDF map for controller synthesis. Please run
-```catkin build ```
-to build all the required packages (you will need to install additional packages as below).  
 
 
 ## Install Additional Packages (For GP-SDF Mapping)
@@ -173,14 +216,6 @@ mkdir -p fmt-9.1.0/build && cd fmt-9.1.0/build
 cmake .. -DFMT_DOC=OFF -DFMT_TEST=OFF -DFMT_INSTALL=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON 
 make -j`nproc` 
 sudo make install
-```
-
-## Alternative: Use Docker
-A script is provided to build the docker image for the project. To use the script, you need to install docker and nvidia-docker first.
-```bash
-cd docker
-chmod +x build.bash
-./build.bash
 ```
 
 # 🏷️ License
