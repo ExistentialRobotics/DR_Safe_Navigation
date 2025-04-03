@@ -1,10 +1,10 @@
-Distributively Robust Safe Robot Navigation
+Distributionally Robust Safe Robot Navigation
 ===========================================
 
 [[Website]](https://existentialrobotics.org/DRO_Safe_Navigation/)
 [[Paper]](https://arxiv.org/abs/2405.18251)
 
-This repository contains implementations for the work "Sensor-Based Distributively Robust Control for Safe Robot Navigation in Dynamic Environments".
+This repository contains implementations for the work "Sensor-Based Distributionally Robust Control for Safe Robot Navigation in Dynamic Environments".
 
 If you find our work useful, please consider citing our paper:
 ```
