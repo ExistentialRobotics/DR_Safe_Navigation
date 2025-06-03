@@ -22,7 +22,9 @@ RUN apt install -y ros-noetic-pybind11-catkin \
     ros-noetic-map-server \
     ros-noetic-hector-mapping \
     ros-noetic-tf2-sensor-msgs \
-    intel-basekit
+    intel-basekit-2024.1 \
+    ccache \
+    xterm
 RUN DEBIAN_FRONTEND=noninteractive apt install -y ros-noetic-jackal*
 RUN DEBIAN_FRONTEND=noninteractive apt install -y ros-noetic-rqt*
 
@@ -48,6 +50,6 @@ RUN wget https://github.com/fmtlib/fmt/archive/refs/tags/9.1.0.tar.gz && tar -xf
 
 RUN git clone https://github.com/robotics-upo/lightsfm && cd lightsfm && make && make install && cd /root && rm -rf lightsfm
 
-RUN pip install cvxpy vedo && pip install -U numpy==1.23.5
+RUN pip install cvxpy vedo==2024.5.2 && pip install -U numpy==1.23.5
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*

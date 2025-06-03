@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-""" Low level velocity conttoller for unicycle-like robot.
+"""Low level velocity conttoller for unicycle-like robot.
 
 Interfaces:
     Input:
@@ -19,6 +19,7 @@ from erl_clf_cbf_controller.pre_process import ClfCbfPreprocess
 from erl_clf_cbf_controller.post_process import ClfCbfPostprocess
 
 import json
+
 # different controller formulation
 from erl_clf_cbf_controller.clf_cbf_controller import ClfCbfController
 from erl_clf_cbf_controller.clf_only_controller import ClfQPController
@@ -30,7 +31,6 @@ from erl_clf_cbf_controller.clf_cbf_drccp_dynamic_controller import ClfCbfDrccp_
 
 import csv
 import os
-
 
 
 def off_wheel_map(rbt_pose, off_wheel_length):
@@ -45,7 +45,6 @@ def off_wheel_map(rbt_pose, off_wheel_length):
     return np.array([off_wheel_x, off_wheel_y, off_wheel_theta])
 
 
-
 class ClfCbfControllerWrapper:
     """
     CLF-CBF-QP controller wrapper, check system status
@@ -56,14 +55,13 @@ class ClfCbfControllerWrapper:
     GOAL_REACHED = 1
 
     def __init__(self, config_table=None):
-        """ Init ClfCbfControllerWrapper class.
-            This controller subscribes:
-                odom (from localization)
-                desired robot states (from high level controller, i.e., ref_)
-            Publish:
-                desired velocity / body twist
+        """Init ClfCbfControllerWrapper class.
+        This controller subscribes:
+            odom (from localization)
+            desired robot states (from high level controller, i.e., ref_)
+        Publish:
+            desired velocity / body twist
         """
-
 
         # function class handle
         self.preprocessor = None
@@ -73,7 +71,7 @@ class ClfCbfControllerWrapper:
         # loading external config parameters
         self._config_dict = config_table
 
-        self.controller_type = rospy.get_param('~controller_type', 'drccp')  # Default to 'drccp' if not set
+        self.controller_type = rospy.get_param("~controller_type", "drccp")  # Default to 'drccp' if not set
         self.load_controller_config()
 
         # system status
@@ -88,10 +86,8 @@ class ClfCbfControllerWrapper:
         self.init_preprocessor()
         self.init_postprocessor()
 
-
         # ------------------- Cache --------------------
         self.response_cache = []
-
 
         # ----------------- for plotting performance -------------
 
@@ -99,7 +95,7 @@ class ClfCbfControllerWrapper:
         self.w_list = []
         self.distance_list = []
 
-        self.error_to_gamma =  []
+        self.error_to_gamma = []
 
         self.robot_pos = []
 
@@ -112,14 +108,14 @@ class ClfCbfControllerWrapper:
         self.last_waypoint = None
 
         # set numpy array console print precision = 2
-        np.set_printoptions(formatter={'float': '{: 0.2f}'.format})
+        np.set_printoptions(formatter={"float": "{: 0.2f}".format})
         rospy.loginfo("CLF-CBF CONTROL NODE INIT SUCCESSFUL!")
 
     def load_controller_config(self):
         # Load the configuration file
         current_dir = os.path.dirname(os.path.abspath(__file__))
-        config_path = os.path.join(current_dir, 'controller_config.json')
-        with open(config_path, 'r') as file:
+        config_path = os.path.join(current_dir, "controller_config.json")
+        with open(config_path, "r") as file:
             configs = json.load(file)
 
         # Determine which controller configuration to use
@@ -131,10 +127,10 @@ class ClfCbfControllerWrapper:
         self.config = configs[controller_type]
 
         # Assigning new variables from the selected config
-        params = self.config['parameters']
-        self._wheel_offset = params.get('wheel_offset', 0.08)  # Default to 0.08 if not set
-        self._cbf_rate = params.get('cbf_rate', 0.4)  # Default to 0.4 if not set
-        self.noise_level = params.get('noise_level', 0.01)  # Default to 0.01 if not set
+        params = self.config["parameters"]
+        self._wheel_offset = params.get("wheel_offset", 0.08)  # Default to 0.08 if not set
+        self._cbf_rate = params.get("cbf_rate", 0.4)  # Default to 0.4 if not set
+        self.noise_level = params.get("noise_level", 0.01)  # Default to 0.01 if not set
 
         # Initialize the controller based on the controller type
         self.init_core()
@@ -152,11 +148,22 @@ class ClfCbfControllerWrapper:
         file_path = os.path.join(script_dir, filename)
 
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
-        with open(file_path, 'w', newline='') as file:
+        with open(file_path, "w", newline="") as file:
             writer = csv.writer(file)
-            writer.writerow(['Linear Velocity', 'Angular Velocity', 'Distance to Obstacle', 'Tracking Error', 'X Position', 'Y Position'])
+            writer.writerow(
+                [
+                    "Linear Velocity",
+                    "Angular Velocity",
+                    "Distance to Obstacle",
+                    "Tracking Error",
+                    "X Position",
+                    "Y Position",
+                ]
+            )
 
-            for v, w, dist, tracking_error, pos in zip(self.v_list, self.w_list, self.distance_list, self.error_to_gamma, self.robot_pos):
+            for v, w, dist, tracking_error, pos in zip(
+                self.v_list, self.w_list, self.distance_list, self.error_to_gamma, self.robot_pos
+            ):
                 writer.writerow([v, w, dist, tracking_error, pos[0][0], pos[1][0]])
 
     def save_mov_obs_data_to_csv(self, filename="mov_obs_data.csv"):
@@ -164,25 +171,22 @@ class ClfCbfControllerWrapper:
         script_dir = os.path.dirname(os.path.realpath(__file__))
         file_path = os.path.join(script_dir, filename)
 
-        with open(file_path, 'w', newline='') as file:
+        with open(file_path, "w", newline="") as file:
             writer = csv.writer(file)
-            writer.writerow(['PosX', 'PosY', 'VelX', 'VelY', 'Radius'])
+            writer.writerow(["PosX", "PosY", "VelX", "VelY", "Radius"])
             for data in self.mov_obs_data:
                 writer.writerow(data)
-
 
     def save_waypoints_to_csv(self, filename="waypoints.csv"):
         """Save collected waypoints to a CSV file."""
         script_dir = os.path.dirname(os.path.realpath(__file__))
         file_path = os.path.join(script_dir, filename)
 
-        with open(file_path, 'w', newline='') as file:
+        with open(file_path, "w", newline="") as file:
             writer = csv.writer(file)
-            writer.writerow(['X', 'Y', 'Theta'])
+            writer.writerow(["X", "Y", "Theta"])
             for waypoint in self.waypoints:
                 writer.writerow(waypoint)
-
-
 
     def init_core(self):
         """
@@ -191,7 +195,7 @@ class ClfCbfControllerWrapper:
         """
         # Initialize the controller based on the configuration
         controller_type = self.controller_type
-        params = self.config['parameters']
+        params = self.config["parameters"]
 
         if controller_type == "baseline_clf_cbf_qp":
             self.core = ClfCbfController(**params)
@@ -206,20 +210,17 @@ class ClfCbfControllerWrapper:
         else:
             raise ValueError("Unknown controller type specified.")
 
-
     def init_postprocessor(self):
         """
         Init preprocessor of node.
         """
         self.postprocessor = ClfCbfPostprocess(ctrl_limits=self.ctrl_limits)
 
-
     def update_waypoints(self):
         current_waypoint = self.preprocessor._np_z_dsr.tolist()
         if self.last_waypoint != current_waypoint:  # Check if the waypoint has changed
             self.waypoints.append(current_waypoint)
             self.last_waypoint = current_waypoint  # Update the last waypoint
-
 
     def update(self, eps_dist=0.25, eps_dist_reset=0.35, num_samples=5):
         """
@@ -231,7 +232,6 @@ class ClfCbfControllerWrapper:
 
         # update the waypoint (currently, it is just local goal)
         self.update_waypoints()
-
 
         # receive robot pose from process
         z = off_wheel_map(rbt_pose=self.preprocessor._np_z, off_wheel_length=self._wheel_offset)
@@ -265,29 +265,36 @@ class ClfCbfControllerWrapper:
                 response = response_temp
                 self.response_cache = response_temp
 
+            msg_sdf = self.preprocessor.msg_sdf
+            msg_sdf.header.stamp = rospy.Time.now()
+            msg_sdf.header.seq += 1
+            msg_sdf.pose.pose.position.x = z[0]
+            msg_sdf.pose.pose.position.y = z[1]
+            msg_sdf.pose.covariance[0] = response.sdf[0] ** 2
+            msg_sdf.pose.covariance[7] = response.sdf[0] ** 2
+            rospy.loginfo_throttle(0.5, f"Received SDF response: {response.sdf[0]}")
+            self.preprocessor.sdf_pub.publish(msg_sdf)
+
             cbf_value = np.array([response.sdf])
             cbf_grad = np.array([response.gradient_x, response.gradient_y])
-
 
             # print('gp_cbf:', cbf_value)
             # print('gp_cbf_grad:', cbf_grad)
 
         else:
-            cbf_value = np.zeros((num_samples, ))
+            cbf_value = np.zeros((num_samples,))
             cbf_grad = np.zeros((2, num_samples))
-            partial_h_partial_t_static = np.zeros((num_samples, ))
+            partial_h_partial_t_static = np.zeros((num_samples,))
 
             for index, item in enumerate(self.preprocessor.scan_buffer):
                 dist_rbt2surface = np.linalg.norm(rbt_xy - item, axis=0)
 
-
-                '''
+                """
                 Adding lidar noise (naive way), it is highly recommended to modClfCbfControllerWrapperify the source urdf file instead
-                '''
+                """
                 # Adding Gaussian noise to each distance measurement
 
                 # sigma_values = self.noise_level * dist_rbt2surface
-
 
                 # noise = np.random.normal(0, sigma_values)
                 # dist_rbt2surface = dist_rbt2surface + noise
@@ -322,8 +329,6 @@ class ClfCbfControllerWrapper:
                     #     for i in range(len(mov_obs_xy[0])):
                     #         self.mov_obs_data.append([mov_obs_xy[0][i], mov_obs_xy[1][i], mov_obs_vel[0][i], mov_obs_vel[1][i], mov_obs_rad[i]])
 
-
-
                     dist_rbt2mov = np.linalg.norm(rbt_xy - mov_obs_xy, axis=0) - mov_obs_rad
                     mov_obs_grad = rbt_xy - mov_obs_xy
                     norm_mov_gradient = mov_obs_grad / np.linalg.norm(mov_obs_grad, axis=0)
@@ -341,7 +346,7 @@ class ClfCbfControllerWrapper:
             sorted_cbf_grad = cbf_grad[:, cbf_index]
             sorted_partial_h_partial_t = partial_h_partial_t[cbf_index]
 
-            #print('sorted_dh_dt:', partial_h_partial_t_mov)
+            # print('sorted_dh_dt:', partial_h_partial_t_mov)
 
         min_index = np.argmin(cbf_value)  # Find the index of the minimum cbf_value
 
@@ -377,32 +382,44 @@ class ClfCbfControllerWrapper:
 
             if self.controller_type == "baseline_clf_cbf_qp":
                 # Example of how you might use the controller
-                v, w = self.core.generate_controller(rbt_pose=z, gamma_s=z_dsr[0:2],
-                                                     cbf_h_val=sdf_val, cbf_h_grad=sdf_grad)
+                v, w = self.core.generate_controller(
+                    rbt_pose=z, gamma_s=z_dsr[0:2], cbf_h_val=sdf_val, cbf_h_grad=sdf_grad
+                )
 
             elif self.controller_type == "clf_qp_only":
-                v, w = self.core.generate_controller(rbt_pose=z, gamma_s=z_dsr[0:2],
-                                                  cbf_h_val=sdf_val, cbf_h_grad=sdf_grad)
-
+                v, w = self.core.generate_controller(
+                    rbt_pose=z, gamma_s=z_dsr[0:2], cbf_h_val=sdf_val, cbf_h_grad=sdf_grad
+                )
 
             elif self.controller_type == "robust_cbf_socp":
-                v, w = self.core.generate_controller(rbt_pose=z, gamma_s=z_dsr[0:2],
-                                                  cbf_h_val=sdf_val, cbf_h_grad=sdf_grad,
-                                                  h_error_bound = np.array([response.var_sdf]),
-                                                  grad_h_error_bound = np.array([response.var_gradient_x, response.var_gradient_y]))
+                v, w = self.core.generate_controller(
+                    rbt_pose=z,
+                    gamma_s=z_dsr[0:2],
+                    cbf_h_val=sdf_val,
+                    cbf_h_grad=sdf_grad,
+                    h_error_bound=np.array([response.var_sdf]),
+                    grad_h_error_bound=np.array([response.var_gradient_x, response.var_gradient_y]),
+                )
 
             elif self.controller_type == "gp_cbf_socp":
-                v, w = self.core.generate_controller(rbt_pose=self.preprocessor._np_z, gamma_s=z_dsr[0:2],
-                                                  cbf_h_val=sdf_val,
-                                                  cbf_h_grad=sdf_grad,
-                                                  cbf_h_variance = np.array([response.var_sdf]),
-                                                  cbf_h_grad_var = np.array([response.var_gradient_x, response.var_gradient_y]))
+                v, w = self.core.generate_controller(
+                    rbt_pose=self.preprocessor._np_z,
+                    gamma_s=z_dsr[0:2],
+                    cbf_h_val=sdf_val,
+                    cbf_h_grad=sdf_grad,
+                    cbf_h_variance=np.array([response.var_sdf]),
+                    cbf_h_grad_var=np.array([response.var_gradient_x, response.var_gradient_y]),
+                )
 
             elif self.controller_type == "drccp":
                 # Example for DRCCP controller
-                v, w = self.core.generate_controller(rbt_pose=z, gamma_s=z_dsr[0:2],
-                                                 h_samples=sorted_cbf_value, h_grad_samples=sorted_cbf_grad,
-                                                 dh_dt_samples=sorted_partial_h_partial_t)
+                v, w = self.core.generate_controller(
+                    rbt_pose=z,
+                    gamma_s=z_dsr[0:2],
+                    h_samples=sorted_cbf_value,
+                    h_grad_samples=sorted_cbf_grad,
+                    dh_dt_samples=sorted_partial_h_partial_t,
+                )
             else:
                 raise ValueError(f"Unknown controller type: {self.controller_type}")
 
@@ -414,7 +431,9 @@ class ClfCbfControllerWrapper:
 
             if self.mov_obs_flag:
                 for i in range(len(mov_obs_xy[0])):
-                    self.mov_obs_data.append([mov_obs_xy[0][i], mov_obs_xy[1][i], mov_obs_vel[0][i], mov_obs_vel[1][i], mov_obs_rad[i]])
+                    self.mov_obs_data.append(
+                        [mov_obs_xy[0][i], mov_obs_xy[1][i], mov_obs_vel[0][i], mov_obs_vel[1][i], mov_obs_rad[i]]
+                    )
 
             self.v_list.append(v)
             self.w_list.append(w)
@@ -425,7 +444,6 @@ class ClfCbfControllerWrapper:
             self.error_to_gamma.append(dist_err)
             self.robot_pos.append(rbt_xy)
 
-
         else:
             # reserve for more status
             pass
@@ -434,9 +452,9 @@ class ClfCbfControllerWrapper:
         self.postprocessor.send_debug(rbt_pose=z, gradient=sdf_grad)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     try:
-        rospy.init_node('clf_cbf_controller')
+        rospy.init_node("clf_cbf_controller")
         rospy.loginfo("[clf_cbf_controller] Started!\n")
 
         # loading parameters
@@ -449,9 +467,7 @@ if __name__ == '__main__':
         w_min = rospy.get_param("~w_min", 2.0)
         w_max = rospy.get_param("~w_max", -2.0)
 
-        config_dict = {
-            'ctrl_limits': {'v_min': v_min, 'v_max': v_max, 'w_min': w_min, 'w_max': w_max}
-        }
+        config_dict = {"ctrl_limits": {"v_min": v_min, "v_max": v_max, "w_min": w_min, "w_max": w_max}}
 
         clf_cbf_controller = ClfCbfControllerWrapper(config_dict)
         rate = rospy.Rate(ctrl_freq)
@@ -464,7 +480,7 @@ if __name__ == '__main__':
             rate.sleep()
 
     except rospy.ROSInterruptException:
-        #clf_cbf_controller.save_rob_data_to_csv('saved_data/path2/test.csv')
-        #clf_cbf_controller.save_mov_obs_data_to_csv('saved_data/dynamic/mov_obs_data.csv')
-        #clf_cbf_controller.save_waypoints_to_csv('saved_data/dynamic/waypoints.csv')
+        # clf_cbf_controller.save_rob_data_to_csv('saved_data/path2/test.csv')
+        # clf_cbf_controller.save_mov_obs_data_to_csv('saved_data/dynamic/mov_obs_data.csv')
+        # clf_cbf_controller.save_waypoints_to_csv('saved_data/dynamic/waypoints.csv')
         pass

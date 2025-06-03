@@ -11,6 +11,7 @@ from tf2_sensor_msgs.tf2_sensor_msgs import do_transform_cloud
 import tf2_ros
 from tf.transformations import euler_from_quaternion
 from erl_msgs.msg import MovObsInfoArray
+from geometry_msgs.msg import PoseWithCovarianceStamped
 
 # Conditional import for erl_sdf_mapping
 try:
@@ -25,8 +26,6 @@ from sensor_msgs.msg import PointField
 from sensor_msgs import point_cloud2
 
 
-
-
 class ClfCbfPreprocess:
     """
     Topic subscribe and service call
@@ -35,12 +34,12 @@ class ClfCbfPreprocess:
     def __init__(self):
 
         # params from launch file
-        _odom_topic = rospy.get_param('~odom_topic')
-        _goal_topic = rospy.get_param('~goal_topic')
-        _scan_topic = rospy.get_param('~scan_topic', "/front/scan")
-        self.mov_obs = rospy.get_param('~mov_obs', False)
-        self.use_sdf = rospy.get_param('~use_sdf', False)
-        self._debug_on = rospy.get_param('~debug_mode', True)
+        _odom_topic = rospy.get_param("~odom_topic")
+        _goal_topic = rospy.get_param("~goal_topic")
+        _scan_topic = rospy.get_param("~scan_topic", "/front/scan")
+        self.mov_obs = rospy.get_param("~mov_obs", False)
+        self.use_sdf = rospy.get_param("~use_sdf", False)
+        self._debug_on = rospy.get_param("~debug_mode", True)
 
         # subscribers
         self._odom_sub = rospy.Subscriber(_odom_topic, Odometry, self.odom_callback, queue_size=1)
@@ -49,16 +48,28 @@ class ClfCbfPreprocess:
 
         # Moving obstacle subscriber
         if self.mov_obs:
-            self._movobs_sub = rospy.Subscriber("/mov_obs_info_array", MovObsInfoArray, self.movobs_callback, queue_size=1)
+            self._movobs_sub = rospy.Subscriber(
+                "/mov_obs_info_array", MovObsInfoArray, self.movobs_callback, queue_size=1
+            )
 
         # debug publisher
         if self._debug_on:
-            self.pcl2_pub = rospy.Publisher('~surfaces', PointCloud2, queue_size=1)
+            self.pcl2_pub = rospy.Publisher("~surfaces", PointCloud2, queue_size=1)
             self.pcl2_debug_msg = None
 
         # services
         if self.use_sdf:
-            self.sdf_client = rospy.ServiceProxy('/erl_sdf_mapping_node/predict_sdf', PredictSdf, persistent=True)
+            self.sdf_client = rospy.ServiceProxy("/erl_sdf_mapping_node/predict_sdf", PredictSdf, persistent=True)
+            self.sdf_pub = rospy.Publisher("~sdf", PoseWithCovarianceStamped, queue_size=1)
+            self.msg_sdf = PoseWithCovarianceStamped()
+            self.msg_sdf.header.frame_id = "map"
+            self.msg_sdf.header.seq = -1
+            self.msg_sdf.pose.pose.position.z = 0.0
+            self.msg_sdf.pose.pose.orientation.x = 0.0
+            self.msg_sdf.pose.pose.orientation.y = 0.0
+            self.msg_sdf.pose.pose.orientation.z = 0.0
+            self.msg_sdf.pose.pose.orientation.w = 1.0
+            self.msg_sdf.pose.covariance = [0.00001] * 36
             self._dist_service_ready = False
 
         # upstream status variables
@@ -89,9 +100,11 @@ class ClfCbfPreprocess:
 
         # ------------------- Init Debug --------------------
         if self._debug_on:
-            self.pcl2_debug_fields = [PointField('x', 0, PointField.FLOAT32, 1),
-                                      PointField('y', 4, PointField.FLOAT32, 1),
-                                      PointField('z', 8, PointField.FLOAT32, 1)]
+            self.pcl2_debug_fields = [
+                PointField("x", 0, PointField.FLOAT32, 1),
+                PointField("y", 4, PointField.FLOAT32, 1),
+                PointField("z", 8, PointField.FLOAT32, 1),
+            ]
 
             self.pcl2_debug_header = Header()
             self.pcl2_debug_header.frame_id = "map"
@@ -102,14 +115,18 @@ class ClfCbfPreprocess:
         rospy.loginfo("[CLF-CBF Preprocessor Created!]  \n")
 
     def _check_upstream_connections(self, upstream_connection=2):
-        """ check whether subscribers' uplink connections are established """
+        """check whether subscribers' uplink connections are established"""
 
         self._upstream_connection = self._odom_sub.get_num_connections() + self._scan_sub.get_num_connections()
 
         if self._upstream_connection < upstream_connection:
             # we need to wait path, states and lidar all ready
-            rospy.logwarn_throttle(1.0, '[clf_cbf_pre] waiting upstream connections [%d / %d]:',
-                                   self._upstream_connection, upstream_connection)
+            rospy.logwarn_throttle(
+                1.0,
+                "[clf_cbf_pre] waiting upstream connections [%d / %d]:",
+                self._upstream_connection,
+                upstream_connection,
+            )
             # odom
             if self._odom_sub.get_num_connections() < 1:
                 rospy.loginfo_throttle(1.0, "[clf_cbf_pre] waiting odom...")
@@ -159,8 +176,8 @@ class ClfCbfPreprocess:
             pcl2_msg = self.laser_projection.projectLaser(scan_msg)
             pcl2_transformed = do_transform_cloud(pcl2_msg, transform_lidar2map)
             pcl_data = ros_numpy.numpify(pcl2_transformed)
-            points_x = pcl_data['x']
-            points_y = pcl_data['y']
+            points_x = pcl_data["x"]
+            points_y = pcl_data["y"]
             surface_points = np.vstack((points_x, points_y))
             self.scan_buffer.insert(0, surface_points)
 
@@ -173,14 +190,20 @@ class ClfCbfPreprocess:
                     self.scan_buffer_ready = True
 
             if self._debug_on and self.scan_buffer_ready and self._upstream_init_finish:
-                surface_buffer_xy = np.row_stack((self.scan_buffer[0].T, self.scan_buffer[1].T,
-                                                  self.scan_buffer[2].T, self.scan_buffer[3].T,
-                                                  self.scan_buffer[4].T))
-                surface_points_xyz = np.column_stack((surface_buffer_xy,
-                                                     np.zeros(np.shape(surface_buffer_xy)[0])))
+                surface_buffer_xy = np.row_stack(
+                    (
+                        self.scan_buffer[0].T,
+                        self.scan_buffer[1].T,
+                        self.scan_buffer[2].T,
+                        self.scan_buffer[3].T,
+                        self.scan_buffer[4].T,
+                    )
+                )
+                surface_points_xyz = np.column_stack((surface_buffer_xy, np.zeros(np.shape(surface_buffer_xy)[0])))
                 self.pcl2_debug_header.stamp = rospy.Time.now()
-                self.pcl2_debug_msg = point_cloud2.create_cloud(self.pcl2_debug_header, self.pcl2_debug_fields,
-                                                                surface_points_xyz)
+                self.pcl2_debug_msg = point_cloud2.create_cloud(
+                    self.pcl2_debug_header, self.pcl2_debug_fields, surface_points_xyz
+                )
 
                 self.pcl2_pub.publish(self.pcl2_debug_msg)
 
@@ -192,8 +215,7 @@ class ClfCbfPreprocess:
 
         for mi in range(mo_n):
             moi_msg = mo_array[mi]
-            moi_info = np.array([moi_msg.p_mo.x, moi_msg.p_mo.y,
-                                 moi_msg.v_mo.x, moi_msg.v_mo.y, moi_msg.r_mo])
+            moi_info = np.array([moi_msg.p_mo.x, moi_msg.p_mo.y, moi_msg.v_mo.x, moi_msg.v_mo.y, moi_msg.r_mo])
             mo_list = np.vstack((mo_list, moi_info))
         self.mo_list = mo_list
 
@@ -201,7 +223,7 @@ class ClfCbfPreprocess:
             self.mov_obs_ready = True
 
     def _check_upstream_data(self):
-        """ check whether upstream data container are loaded/initialized correctly"""
+        """check whether upstream data container are loaded/initialized correctly"""
         # navigation path r
         status = True
 
@@ -242,7 +264,7 @@ class ClfCbfPreprocess:
 
         if self.use_sdf:
             while (not self._dist_service_ready) and (not rospy.is_shutdown()):
-                rospy.wait_for_service('/erl_sdf_mapping_node/predict_sdf')
+                rospy.wait_for_service("/erl_sdf_mapping_node/predict_sdf")
                 self._dist_service_ready = True
                 rospy.sleep(0.1)
 
@@ -268,8 +290,9 @@ class ClfCbfPreprocess:
 
         previous_rbt_loc = self._prev_rbt_loc[0:2]
         rbt_heading = self._np_z[2]
-        dist_perp = np.abs((current_rbt_loc - previous_rbt_loc) @ np.array([[-np.sin(rbt_heading)],
-                                                                            [np.cos(rbt_heading)]]))
+        dist_perp = np.abs(
+            (current_rbt_loc - previous_rbt_loc) @ np.array([[-np.sin(rbt_heading)], [np.cos(rbt_heading)]])
+        )
         if dist_perp <= 0.1 and not self.localization_fail:
             self._prev_rbt_loc = self._np_z
         else:

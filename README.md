@@ -9,7 +9,7 @@ This repository contains implementations for the work "Sensor-Based Distribution
 If you find our work useful, please consider citing our paper:
 ```
 @article{long2024sensorbased,
-  title={Sensor-Based Distributionally Robust Control for Safe Robot Navigation in Dynamic Environments}, 
+  title={Sensor-Based Distributionally Robust Control for Safe Robot Navigation in Dynamic Environments},
   author={Kehan Long and Yinzhuang Yi and Zhirui Dai and Sylvia Herbert and Jorge Cortés and Nikolay Atanasov},
   journal={arXiv preprint arXiv:2405.18251},
   year={2024}
@@ -22,7 +22,7 @@ git clone https://github.com/ExistentialRobotics/DR_Safe_Navigation.git
 ```
 
 ## Dependencies
-The code is tested on Ubuntu 20.04 LTS + ROS Noetic, in both simulation and real experiments. 
+The code is tested on Ubuntu 20.04 LTS + ROS Noetic, in both simulation and real experiments.
 
 
 ## Using Docker
@@ -75,7 +75,7 @@ source devel/setup.bash
 # 👩‍💻 Code (Gazebo Simulation)
 
 ## (Optional) Add noise to LiDAR
-To test the robustness of the controller, one can modify the noise model of the lms1xx 2D LiDAR in the Gazebo simulation. To do so, first run ```roscd lms1xx```, then ```cd  urdf/```, and modify the ```sick_lms1xx.urdf.xacro``` file, there is an 'Stddev' variable to modify. (If ```roscd lms1xx``` does not work, one could ```cd /opt/ros/noetic/share/lms1xx``` to the desired directory.) 
+To test the robustness of the controller, one can modify the noise model of the lms1xx 2D LiDAR in the Gazebo simulation. To do so, first run ```roscd lms1xx```, then ```cd  urdf/```, and modify the ```sick_lms1xx.urdf.xacro``` file, there is an 'Stddev' variable to modify. (If ```roscd lms1xx``` does not work, one could ```cd /opt/ros/noetic/share/lms1xx``` to the desired directory.)
 
 ## 🛠️ Launch
 
@@ -98,7 +98,7 @@ https://www.clearpathrobotics.com/assets/guides/kinetic/jackal/simulation.html
 
 To compare the controller performance with the provided baselines in Gazebo, you could specify two options when launching the robot: controller_type and use_sdf. The default setting is controller_type:=drccp, use_sdf:=false.
 
-There are three more controller types: clf_qp_only (no collision avoidance), baseline_clf_cbf_qp, and gp_cbf_socp. To use the GP-SDF map, set use_sdf:=true. 
+There are three more controller types: clf_qp_only (no collision avoidance), baseline_clf_cbf_qp, and gp_cbf_socp. To use the GP-SDF map, set use_sdf:=true.
 
 For example, if you want to run the GP-SOCP controller with the GP-SDF map, use the following command:
 ```
@@ -107,7 +107,7 @@ roslaunch erl_clf_cbf_controller clf_cbf_control.launch controller_type:=gp_cbf_
 
 **Note**: To use the GP-SDF map for controller synthesis. Please run
 ```catkin build ```
-to build all the required packages (you will need to install additional packages as below).  
+to build all the required packages (you will need to install additional packages as below).
 
 
 ## 📦 Manual Dependencies Installation
@@ -155,14 +155,14 @@ For the Gazebo dynamic environment simulation, additionally, you would need to i
 
 
 ## Install Additional Packages (For GP-SDF Mapping)
-If you want to use the GP-SDF map for the controller synthesis, you would need to install the following additional packages. 
+If you want to use the GP-SDF map for the controller synthesis, you would need to install the following additional packages.
 
 Install [intel-basekit](https://www.intel.com/content/www/us/en/developer/tools/oneapi/base-toolkit-download.html?operatingsystem=linux&distributions=aptpackagemanager):
 ```
 wget -O- https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB \ | gpg --dearmor | sudo tee /usr/share/keyrings/oneapi-archive-keyring.gpg > /dev/null
 echo "deb [signed-by=/usr/share/keyrings/oneapi-archive-keyring.gpg] https://apt.repos.intel.com/oneapi all main" | sudo tee /etc/apt/sources.list.d/oneAPI.list
 sudo apt update
-sudo apt install intel-basekit
+sudo apt install intel-basekit-2024.1
 ```
 
 Install Eigen 3.4.90
@@ -213,12 +213,10 @@ Install fmt 9.1.0
 wget https://github.com/fmtlib/fmt/archive/refs/tags/9.1.0.tar.gz
 tar -xf 9.1.0.tar.gz
 mkdir -p fmt-9.1.0/build && cd fmt-9.1.0/build
-cmake .. -DFMT_DOC=OFF -DFMT_TEST=OFF -DFMT_INSTALL=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON 
-make -j`nproc` 
+cmake .. -DFMT_DOC=OFF -DFMT_TEST=OFF -DFMT_INSTALL=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON
+make -j`nproc`
 sudo make install
 ```
 
 # 🏷️ License
-This repository is released under the MIT license. 
-
-
+This repository is released under the MIT license.
